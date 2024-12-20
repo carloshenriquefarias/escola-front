@@ -378,7 +378,6 @@ import {
 
 import {
   FiHome,
-  FiTrendingUp,
   FiCompass,
   FiStar,
   FiSettings,
@@ -386,6 +385,8 @@ import {
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi'
+import { PiStudentBold } from "react-icons/pi";
+import { FaPlusSquare } from "react-icons/fa";
 
 import { IconType } from 'react-icons'
 import { useNavigate } from 'react-router-dom'
@@ -419,12 +420,14 @@ interface SidebarProps extends BoxProps {
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
-  { name: 'Cadastrar aluno', icon: FiTrendingUp, path: '/registerBoatBasic' },
+  { name: 'Todos alunos', icon: PiStudentBold, path: '/all_students' },
+  { name: 'Cadastrar aluno', icon: FaPlusSquare, path: '/register_student' },
   { name: 'Editar aluno', icon: FiCompass, path: '/boatEdit' },
-  { name: 'Lista de turmas', icon: FiStar, path: '/favourites' },
-  { name: 'Lista de rotas', icon: FiSettings, path: '/settings' },
+  { name: 'Lista de turmas', icon: FiStar, path: '/listBoat' },
+  { name: 'Lista de rotas', icon: FiSettings, path: '/' },
+  { name: 'Turmas por ID', icon: FiSettings, path: '/cardBoatDetails' },
   { name: 'Motoristas', icon: FiSettings, path: '/settings' },
-  { name: 'Monitoras', icon: FiSettings, path: '/settings' },
+  { name: 'Monitoras', icon: FiSettings, path: '/settings' },  
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {

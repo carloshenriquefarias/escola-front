@@ -1792,7 +1792,7 @@ type FormData = {
   foto?: FileList;
 }
 
-export default function RegisterBoatsBasic() {
+export default function RegisterStudent() {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const toast = useToast();
   const bg = useColorModeValue("white", "navy.700");

@@ -14,7 +14,7 @@ import ListBoat from './pages/listBoat'
 import ListBoatByUser from './pages/listBoatByUser'
 import Login from './pages/login'
 import Profile from './pages/profile'
-import RegisterBoatsBasic from './pages/registerBoatsBasic'
+import RegisterBoatsBasic from './pages/register_student'
 import SelectPlans from './pages/selectPlans'
 import Admin from './pages/admin'
 import Payments from './pages/payments'
@@ -35,6 +35,10 @@ import AdvancedFilter from './pages/advancedFilter'
 import ForgotMyPassword from './pages/forgotMyPassword'
 import DashboardClientsAndBrokers from './pages/dashboardClientsAndBrokers'
 import EditProfileClientsAndBrokers from './pages/editProfileClientsAndBrokers'
+
+import AllStudents from './pages/all_students'
+import RegisterStudent from './pages/register_student'
+import StudentDetails from './pages/student_details'
 
 
 function App() {
@@ -75,7 +79,13 @@ function App() {
           <Route path={'/adsTerms'} element={<AdsTerms/>} />
           <Route path={'/termsOfUse'} element={<TermsOfUse/>} />
           <Route path={'/advancedFilter'} element={<AdvancedFilter/>} /> 
-          <Route path={'/forgotMyPassword'} element={<ForgotMyPassword/>} />                    
+          <Route path={'/forgotMyPassword'} element={<ForgotMyPassword/>} />  
+
+          <Route path={'/all_students'} element={<AllStudents/>} />  
+          <Route path={'/register_student'} element={<RegisterStudent/>} /> 
+          <Route path={'/student_details/:id'} element={<StudentDetails/>} />
+
+                            
         </Routes>
       </Router>
       </AuthContextProvider>

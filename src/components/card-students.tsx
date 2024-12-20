@@ -64,6 +64,7 @@ export default function CardStudents({
         rounded={'lg'}
         p={6}
         textAlign={'center'}
+        _hover={{ boxShadow: "0 0 0 4px cyan"}}
       >
         <Avatar
           size={'xl'}
