@@ -39,6 +39,7 @@ interface Aluno {
   unidadeConsumidora: string;
   turno: 'Matutino' | 'Vespertino' | 'Noturno';
   rota: string;
+  onClick?: () => void;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,7 +53,8 @@ export default function CardStudents({
   telefoneResponsavel, 
   turma, 
   turno, 
-  rota 
+  rota, 
+  onClick,
 }: Partial<Aluno>) {
   return (
     <Center py={6}>
@@ -181,6 +183,7 @@ export default function CardStudents({
             _focus={{
               bg: 'blue.500',
             }}
+            onClick={onClick}
           >
             Ver aluno
           </Button>

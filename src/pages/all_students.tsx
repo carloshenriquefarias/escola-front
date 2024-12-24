@@ -21,7 +21,7 @@ import { ImNewspaper } from "react-icons/im";
 import { HiClipboardDocumentList } from "react-icons/hi2";
 import { MdPayment } from "react-icons/md";
 
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // import { useAuth } from '../hooks/useAuth';
 
 import { ToastContainer } from "react-toastify";
@@ -74,8 +74,8 @@ export default function AllStudents() {
   const bg = useColorModeValue("white", "navy.700");
   const cardShadow = useColorModeValue("0px 18px 40px rgba(112, 144, 176, 0.12)", "unset");
   const textColorSecondary = "gray.400";
+  const navigate = useNavigate();
 
-  // const navigate = useNavigate();
   // const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   // const isWideVersion = useBreakpointValue({ base: false, lg: true});
 
@@ -87,7 +87,6 @@ export default function AllStudents() {
       const response = await api.get('/alunos');
       const allStudents = response.data.alunos;
       setAllStudents(allStudents);
-      console.log('Dados do usuário:', allStudents);
 
     } catch (error) {
       console.error('Error:', error);
@@ -106,6 +105,10 @@ export default function AllStudents() {
       console.error('Error:', error);
       toastApiResponse(error, 'It is not possible to list this user! Please try again!');
     }
+  };
+
+  const handleStudentDetails = (student_ID: number) => {
+    navigate(`/student_details/${student_ID}`);
   };
 
   const statisticsData = [
@@ -241,6 +244,7 @@ export default function AllStudents() {
                 cpfAluno={student.cpf_aluno} // Corrigido para pegar o CPF correto
                 telefoneResponsavel={student.telefone_responsavel} // Corrigido para pegar o phone_number
                 dataNascimento={student.data_nascimento} // Corrigido para pegar a data de nascimento
+                onClick={() => handleStudentDetails(student.id)}
               />
             ))}            
           </SimpleGrid>

@@ -379,17 +379,22 @@ import {
 import {
   FiHome,
   FiCompass,
-  FiStar,
-  FiSettings,
   FiMenu,
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi'
 import { PiStudentBold } from "react-icons/pi";
 import { FaPlusSquare } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa6";
+import { IoWomanSharp } from "react-icons/io5";
+import { IoMan } from "react-icons/io5";
+import { TbReportSearch } from "react-icons/tb";
+import { FaBus } from "react-icons/fa6";
+import { FaClipboardList } from "react-icons/fa";
 
 import { IconType } from 'react-icons'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth';
 
 // interface LinkItemProps {
 //   name: string
@@ -423,11 +428,12 @@ const LinkItems = [
   { name: 'Todos alunos', icon: PiStudentBold, path: '/all_students' },
   { name: 'Cadastrar aluno', icon: FaPlusSquare, path: '/register_student' },
   { name: 'Editar aluno', icon: FiCompass, path: '/boatEdit' },
-  { name: 'Lista de turmas', icon: FiStar, path: '/listBoat' },
-  { name: 'Lista de rotas', icon: FiSettings, path: '/' },
-  { name: 'Turmas por ID', icon: FiSettings, path: '/cardBoatDetails' },
-  { name: 'Motoristas', icon: FiSettings, path: '/settings' },
-  { name: 'Monitoras', icon: FiSettings, path: '/settings' },  
+  { name: 'Lista de turmas', icon: FaClipboardList, path: '/listBoat' },
+  { name: 'Lista de rotas', icon: FaBus, path: '/' },
+  { name: 'Turmas por ID', icon: TbReportSearch, path: '/cardBoatDetails' },
+  { name: 'Motoristas', icon: IoMan, path: '/settings' },
+  { name: 'Monitoras', icon: IoWomanSharp, path: '/settings' }, 
+  { name: 'Usuários', icon: FaUsers, path: '/all_users' },  
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
@@ -496,6 +502,9 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+
+  const { user, signOut } = useAuth();
+  
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -565,11 +574,12 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user?.name}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {user?.email}
                   </Text>
                 </VStack>
+
                 <Box display={{ base: 'none', md: 'flex' }}>
                   <FiChevronDown />
                 </Box>
@@ -582,7 +592,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={signOut}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

@@ -50,7 +50,7 @@ interface Aluno {
   updatedAt: string; // Data e hora da última atualização do registro no formato ISO (YYYY-MM-DDTHH:MM:SSZ)
 }
 
-export default function CardBoatDetails() {
+export default function Class() {
 
   // const { user } = useAuth();
 
