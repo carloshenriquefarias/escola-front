@@ -1,26 +1,3 @@
-// import { Flex } from '@chakra-ui/react'
-
-// import Footer from '../components/Footer'
-// import Header from '../components/Header'
-// import Projects from '../components/Projects'
-
-// export default function BoatEdit() {
-
-//   return (
-//     <Flex direction="column" height="100%" bg="white">
-//       <Header>
-
-//         <Flex width="100%" my="6" mx="auto" px="6" maxWidth={1000}>
-//           <Projects />
-//         </Flex>
-
-//         <Footer />
-//       </Header>
-//     </Flex>
-//   )
-// }
-
-
 'use client'
 
 import { useForm, Controller } from "react-hook-form"
@@ -312,6 +289,7 @@ export default function BoatEdit() {
               <Controller
                 name="cpf_aluno"
                 control={control}
+                defaultValue={currentStudentData?.cpf_aluno}
                 rules={{
                   required: "CPF é obrigatório",
                   pattern: {
@@ -330,6 +308,7 @@ export default function BoatEdit() {
 
               <Controller
                 name="data_nascimento"
+                defaultValue={currentStudentData?.data_nascimento}
                 control={control}
                 rules={{ required: "Data de nascimento é obrigatória" }}
                 render={({ field }) => (
@@ -632,7 +611,7 @@ export default function BoatEdit() {
           </Card>
 
           <Center>
-            <Button type="submit" colorScheme="blue" mt={5} width={'50%'} height={'3rem'}>
+            <Button type="submit" colorScheme="blue" mt={5} width={'50%'} height={'3rem'} isLoading={isLoading}>
               Cadastrar Aluno
             </Button>
           </Center>

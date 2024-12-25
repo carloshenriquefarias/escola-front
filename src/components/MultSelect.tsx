@@ -1,25 +1,46 @@
+import React from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
-const MultiSelectComponent = ({ options }: any) => {
+interface StudentOption {
+  value: string;
+  label: string;
+}
+
+interface MultiSelectComponentProps {
+  selectedOptions: StudentOption[];
+  onChange: (newOptions: StudentOption[]) => void;
+}
+
+const MultiSelectComponent: React.FC<MultiSelectComponentProps> = ({ selectedOptions, onChange }) => {
   const animatedComponents = makeAnimated();
+
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      cursor: 'default',
+    }),
+    multiValue: (provided: any) => ({
+      ...provided,
+      backgroundColor: '#E2E8F0',
+    }),
+  };
 
   return (
     <Select 
-      defaultValue={[options[0]]}
+      value={selectedOptions}
       components={animatedComponents}
       isMulti
-      options={options}
-      // onChange={(item) => setSelectedOptions(item)}
-      className="select"
+      styles={customStyles}
+      onChange={(newValue) => onChange(newValue as StudentOption[])}
       isClearable={true}
-      isSearchable={true}
-      isDisabled={false}
-      isLoading={false}
-      isRtl={false}
+      isSearchable={false}
       closeMenuOnSelect={false}
+      menuIsOpen={false}
     />
   );
 };
 
 export default MultiSelectComponent;
+
+

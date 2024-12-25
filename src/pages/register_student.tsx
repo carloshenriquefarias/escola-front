@@ -27,7 +27,7 @@
 // import ButtonType from '../components/ButtonType';
 // import BoatForm from '../components/FormBasicInformation';
 // import BoatSelector from '../components/BoatCategorySelector';
-// import Header from '../components/Header';
+// // import Header from '../components/Header';
 // import ModalMaxFiles from '../components/ModalMaxFiles';
 // // import MultiSelectComponent from '../components/MultSelect';
 
@@ -37,6 +37,7 @@
 // import { allCountries } from '../mock/allCountries';
 // import TextEditor from '../components/TextEditor';
 // import { IoIosBoat } from 'react-icons/io';
+// import heic2any from "heic2any";
 
 // interface CustomFile extends File {
 //   preview: string;
@@ -197,9 +198,9 @@
 //     uploaded: 0
 //   });
 
-//   const openModal = () => {
-//     setIsModalOpen(true);
-//   };
+//   // const openModal = () => {
+//   //   setIsModalOpen(true);
+//   // };
 
 //   const closeModal = () => {
 //     setIsModalOpen(false);
@@ -398,101 +399,125 @@
 //     setEngines(values);
 //   };
 
-//   //Data from formBoatDetails - Step 3
+//   // DAQUI PARA BAIXO COMECA A NOVA VERSAO:
 
+//   // Helper to convert HEIC to PNG
+//   const convertHeicToPng = async (file: File): Promise<string | null> => {
+//     try {
+//       const convertedBlob = await heic2any({ blob: file, toType: "image/png" });
+//       if (Array.isArray(convertedBlob)) {
+//         return URL.createObjectURL(convertedBlob[0]);
+//       }
+//       return URL.createObjectURL(convertedBlob);
+//     } catch (error) {
+//       console.error("Error converting HEIC file:", error);
+//       return null;
+//     }
+//   };
+
+//   // Validate and set main image
 //   const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({
 //     maxFiles: 1,
 //     accept: {
-//       'image/jpeg': ['.jpeg', '.jpg'],
-//       'image/png': ['.png']
+//       "image/jpeg": [".jpeg", ".jpg"],
+//       "image/png": [".png"],
+//       "image/heic": [".heic", ".HEIC"],
 //     },
-//     onDrop: (acceptedFiles) => {
+//     onDrop: async (acceptedFiles) => {
 //       const imageFile = acceptedFiles[0];
-
 //       if (!imageFile) return;
 
-//       // Check for image dimensions
-//       const image = new Image();
-//       image.src = URL.createObjectURL(imageFile);
-//       image.onload = () => {
-//         // if (image.width > 1920 || image.height > 1080) {
-//         //   toast.error('This photo is bigger than 1920 x 1080 pixels, so please select a small image!');
-//         //   return;
-//         // }
+//       const isHeic = imageFile.type === "image/heic" || imageFile.name.toLowerCase().endsWith(".heic");
+//       const preview = isHeic ? await convertHeicToPng(imageFile) : URL.createObjectURL(imageFile);
 
-//         if (imageFile.size > 5242880) { // 5MB in bytes,
-//           toast.error('This photo is bigger than 5MB, so please select a small image!');
+//       if (preview) {
+//         if (imageFile.size > 5242880) {
+//           toast.error("This photo is bigger than 5MB, so please select a small image!");
 //           return;
 //         }
 
-//         const updatedFile = Object.assign(imageFile, {
-//           preview: URL.createObjectURL(imageFile),
-//         });
-
-//         setFile(updatedFile);
-//       };
+//         setFile(Object.assign(imageFile, { preview }));
+//       }
 //     },
 //   });
 
 //   const removeImageBoatMain = () => {
-//     URL.revokeObjectURL(file!.preview);
-//     setFile(null);
+//     if (file) {
+//       URL.revokeObjectURL(file.preview);
+//       setFile(null);
+//     }
 //   };
 
+//   // Handle gallery images
 //   const maxFilesAllowed = planSelected ? plans.find((plan) => plan.id === planSelected)?.maxFiles || 1000 : 1000;
+//   // const { getRootProps, getInputProps } = useDropzone({
+//   //   accept: {
+//   //     "image/jpeg": [".jpeg", ".jpg"],
+//   //     "image/png": [".png"],
+//   //     "image/heic": [".heic", ".HEIC"],
+//   //   },
+//   //   onDrop: async (acceptedFiles, fileRejections) => {
+//   //     const totalFiles = imagesBoat.length + acceptedFiles.length;
+
+//   //     if (totalFiles > maxFilesAllowed) {
+//   //       toast.error("Maximum file limit exceeded!");
+//   //       return;
+//   //     }
+
+//   //     if (fileRejections.length > 0) {
+//   //       toast.error("Error uploading files. Ensure the file format is correct with PNG, JPG, or HEIC.");
+//   //       return;
+//   //     }
+
+//   //     const updatedFiles = await Promise.all(
+//   //       acceptedFiles.map(async (file) => {
+//   //         const isHeic = file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic");
+//   //         const preview = isHeic ? await convertHeicToPng(file) : URL.createObjectURL(file);
+
+//   //         return Object.assign(file, { preview });
+//   //       })
+//   //     );
+
+//   //     setImagesBoat((prevFiles) => [...prevFiles, ...updatedFiles]);
+//   //   },
+//   // });
+
 //   const { getRootProps, getInputProps } = useDropzone({
 //     accept: {
-//       "image/png": [".png", ".jpg"],
-//       "text/html": [".html", ".htm"],
+//       "image/jpeg": [".jpeg", ".jpg"],
+//       "image/png": [".png"],
+//       "image/heic": [".heic", ".HEIC"],
 //     },
-//     onDrop: (acceptedFiles, fileRejections) => {
+//     onDrop: async (acceptedFiles, fileRejections) => {
 //       const totalFiles = imagesBoat.length + acceptedFiles.length;
-
+  
 //       if (totalFiles > maxFilesAllowed) {
-//         openModal();
+//         toast.error("Maximum file limit exceeded!");
 //         return;
 //       }
-
+  
 //       if (fileRejections.length > 0) {
-//         toast.error(`Error uploading files. Please make sure the file format is correct with png or jpg.`);
+//         toast.error("Error uploading files. Ensure the file format is correct with PNG, JPG, or HEIC.");
 //         return;
 //       }
-
-//       acceptedFiles.forEach((file) => {
-//         const reader = new FileReader();
-//         reader.onload = (event) => {
-//           const result = event.target?.result;
-
-//           if (result) {
-//             const image = new Image();
-//             image.src = result as string;
-
-//             image.onload = () => {
-//               if (image.width > 1920 || image.height > 1080) {
-//                 toast.error('This photo is bigger than 1920 x 1080 pixels, so please select a smaller image!');
-//                 return;
-//               }
-
-//               if (file.size > 5242880) { // 5MB in bytes
-//                 toast.error('This photo is bigger than 5MB, so please select a smaller image!');
-//                 return;
-//               }
-
-//               // Se a imagem passar pelas verificações, adicione-a ao estado
-//               const updatedFile = Object.assign(file, {
-//                 preview: URL.createObjectURL(file),
-//               });
-//               setImagesBoat((prevFiles) => [...prevFiles, updatedFile]);
-//             };
-//           } else {
-//             toast.error('Failed to load image. Please try again.');
-//           }
-//         };
-//         reader.readAsDataURL(file);
-//       });      
+  
+//       await handlePreviewImages(acceptedFiles); // Chamar handlePreviewImages aqui
 //     },
 //   });
-
+  
+//   const handlePreviewImages = async (files: File[]) => {
+//     const updatedFiles = await Promise.all(
+//       files.map(async (file) => {
+//         const isHeic = file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic");
+//         const preview = isHeic ? await convertHeicToPng(file) : URL.createObjectURL(file);
+  
+//         return Object.assign(file, { preview: preview || "" });
+//       })
+//     );
+  
+//     setImagesBoat((prevFiles) => [...prevFiles, ...updatedFiles]);
+//   };
+  
 
 //   const removeFile = (fileToRemove: CustomFile) => {
 //     const updatedFiles = imagesBoat.filter((file) => file !== fileToRemove);
@@ -502,7 +527,7 @@
 //   const Preview = imagesBoat.map((file) => (
 //     <Box key={file.name} borderWidth="1px" borderRadius="lg" p={1} m={2} position="relative">
 //       <IconButton
-//         aria-label="Excluir"
+//         aria-label="Delete"
 //         bg="red"
 //         size="sm"
 //         onClick={() => removeFile(file)}
@@ -525,6 +550,133 @@
 //       </Box>
 //     </Box>
 //   ));
+
+//   //Data from formBoatDetails - Step 3
+
+//   // const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({
+//   //   maxFiles: 1,
+//   //   accept: {
+//   //     'image/jpeg': ['.jpeg', '.jpg'],
+//   //     'image/png': ['.png']
+//   //   },
+//   //   onDrop: (acceptedFiles) => {
+//   //     const imageFile = acceptedFiles[0];
+
+//   //     if (!imageFile) return;
+
+//   //     // Check for image dimensions
+//   //     const image = new Image();
+//   //     image.src = URL.createObjectURL(imageFile);
+//   //     image.onload = () => {
+//   //       // if (image.width > 1920 || image.height > 1080) {
+//   //       //   toast.error('This photo is bigger than 1920 x 1080 pixels, so please select a small image!');
+//   //       //   return;
+//   //       // }
+
+//   //       if (imageFile.size > 5242880) { // 5MB in bytes,
+//   //         toast.error('This photo is bigger than 5MB, so please select a small image!');
+//   //         return;
+//   //       }
+
+//   //       const updatedFile = Object.assign(imageFile, {
+//   //         preview: URL.createObjectURL(imageFile),
+//   //       });
+
+//   //       setFile(updatedFile);
+//   //     };
+//   //   },
+//   // });
+
+//   // const removeImageBoatMain = () => {
+//   //   URL.revokeObjectURL(file!.preview);
+//   //   setFile(null);
+//   // };
+
+//   // const maxFilesAllowed = planSelected ? plans.find((plan) => plan.id === planSelected)?.maxFiles || 1000 : 1000;
+//   // const { getRootProps, getInputProps } = useDropzone({
+//   //   accept: {
+//   //     "image/png": [".png", ".jpg"],
+//   //     "text/html": [".html", ".htm"],
+//   //   },
+//   //   onDrop: (acceptedFiles, fileRejections) => {
+//   //     const totalFiles = imagesBoat.length + acceptedFiles.length;
+
+//   //     if (totalFiles > maxFilesAllowed) {
+//   //       openModal();
+//   //       return;
+//   //     }
+
+//   //     if (fileRejections.length > 0) {
+//   //       toast.error(`Error uploading files. Please make sure the file format is correct with png or jpg.`);
+//   //       return;
+//   //     }
+
+//   //     acceptedFiles.forEach((file) => {
+//   //       const reader = new FileReader();
+//   //       reader.onload = (event) => {
+//   //         const result = event.target?.result;
+
+//   //         if (result) {
+//   //           const image = new Image();
+//   //           image.src = result as string;
+
+//   //           image.onload = () => {
+//   //             if (image.width > 1920 || image.height > 1080) {
+//   //               toast.error('This photo is bigger than 1920 x 1080 pixels, so please select a smaller image!');
+//   //               return;
+//   //             }
+
+//   //             if (file.size > 5242880) { // 5MB in bytes
+//   //               toast.error('This photo is bigger than 5MB, so please select a smaller image!');
+//   //               return;
+//   //             }
+
+//   //             // Se a imagem passar pelas verificações, adicione-a ao estado
+//   //             const updatedFile = Object.assign(file, {
+//   //               preview: URL.createObjectURL(file),
+//   //             });
+//   //             setImagesBoat((prevFiles) => [...prevFiles, updatedFile]);
+//   //           };
+//   //         } else {
+//   //           toast.error('Failed to load image. Please try again.');
+//   //         }
+//   //       };
+//   //       reader.readAsDataURL(file);
+//   //     });      
+//   //   },
+//   // });
+
+//   // const removeFile = (fileToRemove: CustomFile) => {
+//   //   const updatedFiles = imagesBoat.filter((file) => file !== fileToRemove);
+//   //   setImagesBoat(updatedFiles);
+//   // };
+
+//   // const Preview = imagesBoat.map((file) => (
+//   //   <Box key={file.name} borderWidth="1px" borderRadius="lg" p={1} m={2} position="relative">
+//   //     <IconButton
+//   //       aria-label="Excluir"
+//   //       bg="red"
+//   //       size="sm"
+//   //       onClick={() => removeFile(file)}
+//   //       position="absolute"
+//   //       top={2}
+//   //       right={2}
+//   //       zIndex={1}
+//   //     >
+//   //       <Box color="white">
+//   //         <FaTrashCan />
+//   //       </Box>
+//   //     </IconButton>
+
+//   //     <Box position="relative">
+//   //       {file.type.startsWith("image/") ? (
+//   //         <img src={file.preview} alt={file.name} width="100%" height="100%" />
+//   //       ) : (
+//   //         <iframe src={file.preview} title={file.name} width="100%" height="300px" />
+//   //       )}
+//   //     </Box>
+//   //   </Box>
+//   // ));
 
 //   // const formatValue = (value: string) => {
 //   //   const numericValue = value.replace(/\D/g, "");    
@@ -1072,7 +1224,7 @@
 //       {user?.id ? (
 //         <>
 //           <Flex direction="column" height="100%" bg="white" justifyContent='center' alignItems='center'>
-//             <Header />
+//             {/* <Header /> */}
 
 //             {isWideVersion && (
 //               <Box w='100%' mt={10} px={'10rem'} fontSize={['xs', 'sm', 'md']}>
@@ -1397,13 +1549,13 @@
 
 //                         <Divider mt={5} />
 
-//                         <Heading size='md' mt={5} textAlign={'left'}>Add Here Your Main Image</Heading>
+//                         {/* <Heading size='md' mt={5} textAlign={'left'}>Add Here Your Main Image</Heading>
 //                         <Heading size='md' mt={5} textAlign={'left'} color={'red'}>Warning:</Heading>
 //                         <Text mt={5} color={'gray.900'} fontSize='sm' textAlign={'center'}>
 //                           Your main image must be on horizontal orientation position only. We recommend upload images with high resolution for a best performance! Minimum 640 x 480 | Maximum 5 MB.
-//                         </Text>
+//                         </Text> */}
 
-//                         <FormControl>
+//                         {/* <FormControl>
 //                           <VStack spacing={4} mt={5}>
 //                             <Box pb={5} w='100%'>
 //                               <Center w='100%'>
@@ -1472,6 +1624,94 @@
 
 //                             <Box w="100%">
 //                               <Text fontSize="sm" mt={5} fontWeight="thin" textAlign={'center'}>
+//                                 Images Preview
+//                               </Text>
+//                               <Box display="flex" flexWrap="wrap">
+//                                 {Preview}
+//                               </Box>
+//                             </Box>
+//                           </VStack>
+//                         </FormControl> */}
+
+//                         <FormControl>
+//                           <Heading size="md" mt={5} textAlign="left">
+//                             Add Here Your Main Image
+//                           </Heading>
+//                           <Heading size="md" mt={5} textAlign="left" color="red">
+//                             Warning:
+//                           </Heading>
+//                           <Text mt={5} color="gray.900" fontSize="sm" textAlign="center">
+//                             Your main image must be in horizontal orientation only. Minimum 640 x 480 | Maximum 5 MB.
+//                           </Text>
+
+//                           <VStack spacing={4} mt={5}>
+//                             <Box pb={5} w="100%">
+//                               <Center w="100%">
+//                                 <Box
+//                                   {...getRootProps1({ className: "dropzone" })}
+//                                   p={4}
+//                                   borderWidth={2}
+//                                   borderColor="blue.300"
+//                                   borderStyle="dashed"
+//                                   borderRadius="md"
+//                                   textAlign="center"
+//                                   w="100%"
+//                                   cursor="pointer"
+//                                 >
+//                                   <input {...getInputProps1()} />
+//                                   <Icon as={IoIosBoat} fontSize="5xl" color="gray.300" />
+//                                   <Text>Add Here Your Main Image</Text>
+//                                 </Box>
+//                               </Center>
+
+//                               {file && (
+//                                 <Box mt={4} position="relative">
+//                                   <img src={file.preview} alt="Preview" style={{ width: "100%", borderRadius: "10px" }} />
+//                                   <IconButton
+//                                     aria-label="Delete Image"
+//                                     icon={<FaTrashCan />}
+//                                     colorScheme="red"
+//                                     position="absolute"
+//                                     right="10px"
+//                                     top="10px"
+//                                     onClick={removeImageBoatMain}
+//                                   />
+//                                 </Box>
+//                               )}
+//                             </Box>
+//                           </VStack>
+
+//                           <Divider my={5} />
+
+//                           <Heading size="md" mt={8} textAlign="center">
+//                             Select all images you want to show on your listing
+//                           </Heading>
+
+//                           <Text mt={5} color="gray.900" fontSize="sm" textAlign="center">
+//                             Your images can be in horizontal or vertical orientation. Minimum 640 x 480 | Maximum 5 MB.
+//                           </Text>
+
+//                           <VStack spacing={4} mt={8}>
+//                             <Center w="100%">
+//                               <Box
+//                                 {...getRootProps({ className: "dropzone" })}
+//                                 p={4}
+//                                 borderWidth={2}
+//                                 borderColor="blue.300"
+//                                 borderStyle="dashed"
+//                                 borderRadius="md"
+//                                 textAlign="center"
+//                                 w="100%"
+//                                 cursor="pointer"
+//                               >
+//                                 <input {...getInputProps()} />
+//                                 <Icon as={LuImagePlus} fontSize="5xl" color="gray.300" />
+//                                 <Text>Add here all your images</Text>
+//                               </Box>
+//                             </Center>
+
+//                             <Box w="100%">
+//                               <Text fontSize="sm" mt={5} fontWeight="thin" textAlign="center">
 //                                 Images Preview
 //                               </Text>
 //                               <Box display="flex" flexWrap="wrap">

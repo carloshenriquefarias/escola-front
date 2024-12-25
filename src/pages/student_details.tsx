@@ -18,7 +18,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import Header from '../components/Header'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useEffect, useState } from 'react';
 import Card from '../components/Card';
@@ -59,6 +59,7 @@ export default function StudentDetails() {
   const [currentDataUser, setCurrentDataUser] = useState<Student | null>(null);
   const toast = useToast();
   const textColorPrimary = useColorModeValue("blue.300", "white");
+  const navigate = useNavigate();
 
   async function fetchStudentDetails() {
     setLoading(true);
@@ -85,6 +86,10 @@ export default function StudentDetails() {
       }, 2000);
     }
   }
+
+  const handleStudentEdit = (student_ID: number) => {
+    navigate(`/boatEdit/${student_ID}`);
+  };
 
   useEffect(() => {
     fetchStudentDetails();
@@ -360,6 +365,7 @@ export default function StudentDetails() {
                   py={'7'}
                   bg={useColorModeValue('blue.300', 'gray.50')}
                   color={useColorModeValue('white', 'gray.900')}
+                  onClick={() => handleStudentEdit(Number(studentId ?? 0))} // Use 0 como valor padrão
                   textTransform={'uppercase'}
                   _hover={{
                     transform: 'translateY(2px)',
