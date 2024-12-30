@@ -12,7 +12,6 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
 import { api } from "../services/api";
-import { BoatDataGlobal } from '../mock/motorYatchs';
 import { motion } from "framer-motion";
 import { toastApiResponse } from "./Toast";
 import { formatPriceWithCurrency } from "../helpers/changeCoin";
@@ -31,7 +30,7 @@ export default function TabsBoat() {
   const { id: boatId } = useParams<{ id: string }>();
   // const { user } = useAuth();
 
-  const [allDataBoat, setAllDataBoat] = useState<BoatDataGlobal[] | undefined>();
+  const [allDataBoat, setAllDataBoat] = useState<any | undefined>();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +42,7 @@ export default function TabsBoat() {
   // const [muted, setMuted] = useState(true);
   // const videoRef = useRef<HTMLIFrameElement | null>(null);
 
-  const boatCurrency = allDataBoat?.find((dataBoat) => dataBoat.id === boatId);
+  const boatCurrency = allDataBoat?.find((dataBoat: any) => dataBoat.id === boatId);
   // const [userDataCurrent, setUserDataCurrent] = useState<User | null>(null);
 
   const [contents, setContents] = useState([
@@ -520,7 +519,7 @@ export default function TabsBoat() {
                   {boatCurrency.engines && boatCurrency.engines.length > 0 ?
                     <TabPanel>
                       <Box mt={5} mb={5}>
-                        {boatCurrency.engines.map((engine) => (
+                        {boatCurrency.engines.map((engine: any) => (
                           <Table size='md' mt={5}>
                             <Tbody key={engine.id} mt={5}>
                               <Heading fontSize='lg' mb={5}>ENGINE {engine.id}</Heading>

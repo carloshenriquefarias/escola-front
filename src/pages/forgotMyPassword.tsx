@@ -1,13 +1,13 @@
 
 import {
   Box, Button, FormLabel, Heading, useColorModeValue,
-  Flex, Stack, Text, Image, VStack, FormControl, InputGroup,
+  Flex, Stack, Text, VStack, FormControl, InputGroup,
 } from "@chakra-ui/react";
 
 import { useState } from 'react';
 
 import landscape from "../assets/landscape.jpg";
-import logosite from "../assets/logosite.png";
+// import logosite from "../assets/logosite.png";
 
 import DefaultAuth from "../components/DefaultAuth";
 import InputLogin from "../components/InputLogin";
@@ -105,7 +105,7 @@ export default function ForgotMyPassword() {
               justifyContent="center"
               mt={2}
             >
-              <Image src={logosite} />
+              {/* <Image src={logosite} /> */}
             </Box>
 
           </VStack>

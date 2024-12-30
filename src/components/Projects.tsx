@@ -27,9 +27,7 @@ import DropzoneMainImage from "./DropzoneMainImage";
 import ModalDelete from "./ModalDelete";
 
 import { api } from "../services/api";
-import { BoatDataGlobal } from "../mock/motorYatchs";
 import MiniGallery from "./Projects/MiniGallery";
-import { allCountries } from "../mock/allCountries";
 import TextEditor from "./TextEditor";
 
 interface CustomFile extends File {
@@ -53,7 +51,7 @@ export default function Projects() {
   const [imageMainBoat, setImageMainBoat] = useState([]);
 
   const [allEngines, setAllEngines] = useState([]);
-  const [allImagesBoat, setAllImagesBoat] = useState<BoatDataGlobal[] | undefined>([]);
+  const [allImagesBoat, setAllImagesBoat] = useState<any | undefined>([]);
   const [engines, setEngines] = useState([]);
 
   const [isModalOpenDeleteButton, setIsModalOpenDeleteButton] = useState(false);
@@ -753,17 +751,7 @@ export default function Projects() {
 
               <VStack>
                 <FormControl>
-                  <FormLabel>Country</FormLabel>
-                  <Select
-                    id='country'
-                    variant='filled'
-                    value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                  >
-                    {allCountries.map((country) => (
-                      <option key={country.id} value={country.name}>{country.name}</option>
-                    ))}
-                  </Select>
+                  <FormLabel>Country</FormLabel>                  
                 </FormControl>
 
                 <FormControl>

@@ -10,8 +10,6 @@ import { api } from '../services/api';
 import { toastApiResponse } from './Toast';
 import "react-toastify/ReactToastify.min.css";
 
-import { BoatDataGlobal } from '../mock/motorYatchs';
-
 import CardBoat from './CardBoat';
 import React from 'react';
 
@@ -41,7 +39,7 @@ export default function ListCardBoat() {
     { icon: BsGlobeAmericas, title: 'Country', value: boat.country },
   ];
 
-  const [boats, setBoats] = useState<BoatDataGlobal[]>([]);
+  const [boats, setBoats] = useState<any>([]);
   const [loading, setLoading] = useState(true);
 
   const columns = useBreakpointValue({ base: 2, md: 2, lg: 3, xl: 4 });
@@ -88,11 +86,11 @@ export default function ListCardBoat() {
         result[planCategory] = result[planCategory] || [];
         result[planCategory].push(boat);
         return result;
-      }, {} as Record<string, BoatDataGlobal[]>);
+      }, {} as Record<string, any>);
 
       // const finalSortedBoats = Object.values(groupedByPlan).flat();
       const finalSortedBoats = Object.values(groupedByPlan).flat().reverse();
-      setBoats(finalSortedBoats as BoatDataGlobal[]);
+      setBoats(finalSortedBoats as any);
 
       setTimeout(() => {
         setLoading(false);
@@ -175,7 +173,7 @@ export default function ListCardBoat() {
         </SimpleGrid> */}
 
             <SimpleGrid columns={columns} spacing={3}>
-              {boats.slice(0, 20).map((boat, index) => (
+              {boats.slice(0, 20).map((boat: any, index: any) => (
                 <React.Fragment key={index}>
                   <CardBoat
                     cardInfoItems={generateCardInfoItems(boat)}

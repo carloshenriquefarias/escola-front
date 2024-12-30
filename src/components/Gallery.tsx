@@ -8,7 +8,6 @@ import { api } from '../services/api';
 import { toast } from 'react-toastify';
 import { motion } from "framer-motion";
 import 'react-toastify/dist/ReactToastify.min.css';
-import { BoatDataGlobal } from '../mock/motorYatchs';
 import CarouselSlider from './CarouselSlider';
 
 const ThumbnailCarousel: React.FC<{ images: string[]; onClick: (index: number) => void }> = ({
@@ -60,7 +59,7 @@ const Gallery: React.FC = () => {
   const { id: boatId } = useParams<{ id: string }>();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  const [allDataBoat, setAllDataBoat] = useState<BoatDataGlobal[] | undefined>([]);
+  const [allDataBoat, setAllDataBoat] = useState<any | undefined>([]);
 
   const handleThumbnailClick = (index: number) => {
     setSelectedImageIndex(index);
@@ -96,7 +95,7 @@ const Gallery: React.FC = () => {
   }
 
   const baseUrl = "https://techsoluctionscold.com.br/api-boats/uploads/boats_images/";
-  const imagesWithFullUrl = allDataBoat.map((image) => ({
+  const imagesWithFullUrl = allDataBoat.map((image: any) => ({
     src: `${baseUrl}${image}`,
   }));
 
@@ -131,7 +130,7 @@ const Gallery: React.FC = () => {
 
       <HStack w="100%" mt={10} mb={5}>
         <ThumbnailCarousel 
-          images={imagesWithFullUrl.map((image) => image.src)} 
+          images={imagesWithFullUrl.map((image: any) => image.src)} 
           onClick={handleThumbnailClick} 
         />
       </HStack>

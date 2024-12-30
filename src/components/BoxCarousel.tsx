@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { api } from "../services/api";
-import { BoatDataGlobal } from "../mock/motorYatchs";
 // import { motion } from "framer-motion";
 import { toastApiResponse } from "./Toast";
 
@@ -31,12 +30,11 @@ export default function BoxCarousel() {
   const navigate = useNavigate();
   const isWideVersion = useBreakpointValue({ base: false, md: false, lg: false, xl: true });
 
-  const [boats, setBoats] = useState<BoatDataGlobal[]>([]);
+  const [boats, setBoats] = useState([]);
   const [adsType1, setAdsType1] = useState<AdType1[]>([]);
 
   const allMainImages = boats
     .filter((boat: any) => boat.is_date_expired === false)
-    .filter((boat) => boat.is_active === '1')
     .map(({ images, nameBoat, price, priceOrRequest, typeCoin, id, planSelected }) => ({
       src: `https://techsoluctionscold.com.br/api-boats/uploads/boats_images/${images[0]}`,
       nameBoat,

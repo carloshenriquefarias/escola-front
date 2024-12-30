@@ -41,7 +41,7 @@ type FormData = {
   foto?: FileList;
 }
 
-export default function BoatEdit() {
+export default function StudentEdit() {
   
   const toast = useToast();
   const bg = useColorModeValue("white", "navy.700");

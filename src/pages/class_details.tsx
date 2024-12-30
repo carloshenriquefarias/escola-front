@@ -1,4 +1,4 @@
-import { Flex, SimpleGrid, useColorModeValue, Text, Image, Heading, Center, VStack, Avatar, Box } from '@chakra-ui/react';
+import { Flex, SimpleGrid, useColorModeValue, Text, Image, Heading, Center, VStack, Avatar, Box, useToast } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import Card from '../components/Card'
@@ -19,8 +19,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.min.css";
 import { api } from '../services/api';
 import { useEffect, useState } from 'react';
-import { toastApiResponse } from '../components/Toast';
+// import { toastApiResponse } from '../components/Toast';
 import CardStudents from '../components/card-students';
+import { useParams } from 'react-router-dom';
 
 interface Aluno {
   id: number; // Identificação única do aluno
@@ -50,32 +51,54 @@ interface Aluno {
   updatedAt: string; // Data e hora da última atualização do registro no formato ISO (YYYY-MM-DDTHH:MM:SSZ)
 }
 
-export default function CardBoatDetails() {
+export default function ClassDetails() {
 
   // const { user } = useAuth();
+  const { id: classID } = useParams<{ id: string }>();
+  const toast = useToast();
 
   const bg = useColorModeValue("white", "navy.700");
   const cardShadow = useColorModeValue("0px 18px 40px rgba(112, 144, 176, 0.12)", "unset");
   const textColorSecondary = "gray.400";
 
-  const classID = '4A';
-
   const [allStudents, setAllStudents] = useState<Aluno[]>([]);
 
-  const fetchAllStudentsByClass = async () => {
+  // const fetchAllStudentsByClass = async () => {
+  //   try {
+  //     const response = await api.post('/alunos/students-by-class', {
+  //       turma: classID
+  //     });
+  //     const allStudentsByClass = response.data.alunos;
+  //     setAllStudents(allStudentsByClass);
+  //     console.log('Dados dos alunos:', allStudentsByClass);
+
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     toastApiResponse(error, 'Não foi possível listar os alunos desta turma! Por favor, tente novamente!');
+  //   }
+  // };
+
+  async function fetchStudentDetails() {
     try {
-      const response = await api.post('/alunos/students-by-class', {
-        turma: classID
-      });
-      const allStudentsByClass = response.data.alunos;
-      setAllStudents(allStudentsByClass);
-      console.log('Dados dos alunos:', allStudentsByClass);
+      const response = await api.get(`/turmas/${classID}/alunos`);    
+      setAllStudents(response.data.student);
+      console.log('Dados dos alunos:', response.data.student);
+      return
 
     } catch (error) {
       console.error('Error:', error);
-      toastApiResponse(error, 'Não foi possível listar os alunos desta turma! Por favor, tente novamente!');
+      toast({
+        title: "Erro de Login",
+        description: "Não foi possivel carregar os dados do aluno.",
+        status: "error",
+        position: "top",
+        duration: 5000,
+        isClosable: true,
+      });
+      throw error;
+
     }
-  };
+  }
 
   const statisticsData = [
     { bg: 'blue', icon: MdDirectionsBoatFilled, name: 'Alunos na turma', value: allStudents.length },
@@ -87,7 +110,7 @@ export default function CardBoatDetails() {
   ];
 
   useEffect(() => {
-    fetchAllStudentsByClass();
+    fetchStudentDetails();
   }, []);
 
   return (

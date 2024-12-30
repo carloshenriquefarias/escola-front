@@ -3,7 +3,7 @@ import logo from '../assets/logov4.png'
 
 export function Logo() {
   return (    
-    <Center width={["10.75rem", "12.75rem", "15.75rem"]}>
+    <Center width={["10.75rem", "12.75rem", "15.75rem"]} display={{ base: 'flex', md: 'none' }}>
       <Image
         src={logo}
         width={'auto'}

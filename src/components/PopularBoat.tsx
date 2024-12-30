@@ -1,5 +1,4 @@
 import { Text,SimpleGrid, HStack, Divider, useBreakpointValue} from "@chakra-ui/react";
-import { boatTypeList } from "../mock/boatTypeList";
 import { useNavigate } from "react-router-dom";
 import { GiBoatPropeller } from "react-icons/gi";
 
@@ -36,18 +35,18 @@ export default function PopularBoat() {
           mt={[-25, -50, -75, -100]}
         >
           <SimpleGrid columns={{ base: 1, md: 3, lg: 3, xl: 6 }} spacing={2}>
-            {boatTypeList.map((item, index) => (
+            {/* {boatTypeList.map((item, index) => ( */}
               <BoatTypesCard
-                key={index}
-                title={item.title}
-                subtitle={item.subtitle}
-                palavra1={item.palavra1}
-                palavra2={item.palavra2}
-                description={item.description}
-                imageBoatType={item.image}
-                onClick={() => handleClickGoListBoatByType(item.boatType)}
+                key={'index'}
+                title={'item.title'}
+                subtitle={'item.subtitle'}
+                palavra1={'item.palavra1'}
+                palavra2={'item.palavra2'}
+                description={'item.description'}
+                imageBoatType={'item.image'}
+                onClick={() => handleClickGoListBoatByType('item.boatType')}
               />
-            ))}
+            {/* ))} */}
           </SimpleGrid>
         </HStack>
       ) : (
@@ -70,14 +69,14 @@ export default function PopularBoat() {
           <Divider />
 
           <SimpleGrid columns={{ base: 3, md: 6 }} spacing={1} mt={5} px={2}>
-            {boatTypeList.map((item, index) => (
+            {/* {boatTypeList.map((item, index) => ( */}
               <BoatTypesButton
-                key={index}
-                icon={item.icon}
-                text={item.fullName}
-                onClick={() => handleClickGoListBoatByType(item.boatType)}
+                key={'index'}
+                icon={'item.icon'}
+                text={'item.fullName'}
+                onClick={() => handleClickGoListBoatByType('item.boatType')}
               />
-            ))}
+            {/* ))} */}
           </SimpleGrid>
         </SimpleGrid>
       )}

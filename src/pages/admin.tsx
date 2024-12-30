@@ -38,7 +38,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.min.css";
 import { api } from '../services/api';
 import { useEffect, useState } from 'react';
-import { BoatDataGlobal } from '../mock/motorYatchs';
 import { toastApiResponse } from '../components/Toast';
 
 export default function Admin() {
@@ -53,7 +52,7 @@ export default function Admin() {
   const textColorSecondary = "gray.400";
   const isWideVersion = useBreakpointValue({ base: false, lg: true});
 
-  const [boats, setBoats] = useState<BoatDataGlobal[]>([]);
+  const [boats, setBoats] = useState<any>([]);
   const [AllAdsType, setAllAdsType] = useState<any[]>([]);
   const [allNews, setAllNews] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);  
@@ -65,7 +64,7 @@ export default function Admin() {
     is_date_expired_true: 0
   };
 
-  boats.forEach(boat => {
+  boats.forEach((boat: any) => {
     if (boat.is_active === "0") {
       counts.is_active_0++;
     } else if (boat.is_active === "1") {
