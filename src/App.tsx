@@ -39,6 +39,7 @@ import EditProfileClientsAndBrokers from './pages/editProfileClientsAndBrokers'
 import AllStudents from './pages/all_students'
 import RegisterStudent from './pages/register_student'
 import StudentDetails from './pages/student_details'
+import StudentsDeleted from './pages/students_deleted'
 import Class from './pages/class'
 import AllClass from './pages/all_class'
 
@@ -89,6 +90,7 @@ function App() {
           <Route path={'/student_details/:id'} element={<StudentDetails/>} />
           <Route path={'/class/:id'} element={<Class/>} />
           <Route path={'/all_users'} element={<Users/>} />
+          <Route path={'/students_deleted'} element={<StudentsDeleted/>} />
 
                             
         </Routes>

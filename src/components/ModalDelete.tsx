@@ -25,14 +25,16 @@ export default function ModalDelete({ isOpen, onClose, onClick, title, isLoading
     >
       <ModalOverlay/>
       <ModalContent>
-        <ModalHeader color="gray.700">Are you sure you want delete this item?</ModalHeader>
-        <ModalHeader color="blue.400" fontSize={'md'}>{title}</ModalHeader>
+        <ModalHeader color="gray.700" fontSize={'lg'}>
+          Tem certeza que quer realmente deletar este item?
+        </ModalHeader>
+        <ModalHeader color="blue.400" fontSize={'sm'}>{title}</ModalHeader>
         <ModalCloseButton color="gray.700" />
 
         <ModalFooter gap={3} justifyContent={'center'} alignItems={'center'}>
-          <Button onClick={onClose} bg='blue.300' color={'white'}>Cancel</Button>
+          <Button onClick={onClose} bg='blue.300' color={'white'}>Cancelar</Button>
           <Button bg="red.300" color={'white'} mr={3} onClick={onClick} isLoading={isLoading}>
-            Delete
+            Deletar
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -1,27 +1,17 @@
 'use client'
 
 import {
-  Box,
-  Container,
-  Stack,
-  Text,
-  VStack,
-  Button,
-  Heading,
-  SimpleGrid,
-  StackDivider,
-  useColorModeValue,
-  List,
-  ListItem,
-  Avatar,
-  HStack,
-  useToast,
-} from '@chakra-ui/react'
-import Header from '../components/Header'
+  Box, Container, Stack, Text, VStack, Button, Heading, SimpleGrid, StackDivider, useColorModeValue,
+  List, ListItem, Avatar, HStack, useToast, Modal, ModalOverlay, ModalContent, ModalHeader,
+  ModalFooter, ModalBody, ModalCloseButton,
+} from '@chakra-ui/react';
+
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useEffect, useState } from 'react';
+
 import Card from '../components/Card';
+import Header from '../components/Header';
 import Loading from '../components/Loading';
 
 interface Student {
@@ -55,11 +45,31 @@ interface Student {
 export default function StudentDetails() {
 
   const { id: studentId } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState(false);
-  const [currentDataUser, setCurrentDataUser] = useState<Student | null>(null);
+  
   const toast = useToast();
   const textColorPrimary = useColorModeValue("blue.300", "white");
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [currentDataUser, setCurrentDataUser] = useState<Student | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [studentIdToDelete, setStudentIdToDelete] = useState<number | null>(null);
+
+  const formatDateToBrazilian = (dateString: string | undefined): string => {
+    if (!dateString) return 'Data não disponível';
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
+  const handleOpenModal = (id: number) => {
+    setStudentIdToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setStudentIdToDelete(null);
+  };
 
   async function fetchStudentDetails() {
     setLoading(true);
@@ -83,9 +93,56 @@ export default function StudentDetails() {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 1000);
     }
   }
+
+  const handleConfirmDelete = async () => {  
+    setLoading(true);
+    try {  
+      const response = await api.post('/alunos/destroy', { id: studentIdToDelete });
+  
+      if (response.data?.status) {
+        toast({
+          title: "Sucesso",
+          description: "Aluno deletado com sucesso.",
+          status: "success",
+          position: "top",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+
+        navigate('/all_students');
+  
+      } else {
+        toast({
+          title: "Erro",
+          description: response.data?.message || "Erro ao deletar o aluno.",
+          status: "error",
+          position: "top",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+
+    } catch (error) {
+      console.error('Erro ao deletar:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao tentar deletar o aluno. Tente novamente mais tarde.",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      handleCloseModal();
+    }
+  };
 
   const handleStudentEdit = (student_ID: number) => {
     navigate(`/boatEdit/${student_ID}`);
@@ -205,7 +262,7 @@ export default function StudentDetails() {
                         <Text as={'span'} fontWeight={'bold'} color={'blue.300'}>
                           Data de nascimento:
                         </Text>{' '}
-                        {currentDataUser?.data_nascimento}
+                        {formatDateToBrazilian(currentDataUser?.data_nascimento)}
                       </ListItem>
 
                       <ListItem color={'blue.300'}>
@@ -383,6 +440,7 @@ export default function StudentDetails() {
                   py={'7'}
                   bg={useColorModeValue('red.500', 'red.200')}
                   color={useColorModeValue('white', 'gray.900')}
+                  onClick={() => handleOpenModal(Number(studentId ?? 0))}
                   textTransform={'uppercase'}
                   _hover={{
                     transform: 'translateY(2px)',
@@ -391,6 +449,32 @@ export default function StudentDetails() {
                 >
                   Deletar aluno
                 </Button>
+
+                {isModalOpen && (
+                  <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Confirmar exclusão</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        Tem certeza de que deseja deletar este aluno? Esta ação não pode ser desfeita.
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button variant="ghost" onClick={handleCloseModal}>
+                          Cancelar
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          ml={3}
+                          onClick={handleConfirmDelete}
+                        >
+                          Deletar
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                )}
+                
               </HStack>
             </Stack>
           }

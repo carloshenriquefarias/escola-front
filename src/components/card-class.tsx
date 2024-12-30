@@ -1,22 +1,27 @@
 'use client'
 
-import {
-  Heading,
-  Avatar,
-  Box,
-  Center,
-  Text,
-  Stack,
-  Button,
-  useColorModeValue,
-  HStack,
-  Icon,
-  VStack,
-} from '@chakra-ui/react'
-import { IoIosPricetags } from 'react-icons/io'
+import { Heading, Avatar, Box, Center, Text, Stack, Button, useColorModeValue, HStack,
+  Icon, VStack,
+} from '@chakra-ui/react';
 
+import { IoIosPricetags } from 'react-icons/io';
+import { TbMoodBoy } from "react-icons/tb";
+import { CgGirl } from "react-icons/cg";
 
-export default function CardClass({}) {
+interface Turma {
+  id?: number;
+  name_class: string;
+  teacher: string;
+  period: string;
+  onClick?: () => void;
+}
+
+export default function CardClass({
+  name_class,
+  teacher,
+  period,
+  onClick,
+}: Partial<Turma>) {
   return (
     <Center py={6}>
       <Box
@@ -38,16 +43,12 @@ export default function CardClass({}) {
         />
 
         <Heading fontSize={'xl'} fontWeight={'semibold'} fontFamily={'body'} color={'blue.300'}>
-          1A | Anne Maria 
+          {name_class} | {teacher} 
         </Heading>
 
         <Text fontSize={'sm'} color={'gray.500'} mb={4} mt={1}>
-          Vespertino
+          {period}
         </Text>
-
-        {/* <Text fontSize={'sm'} color={'gray.500'} mb={4} mt={0}>
-          {'1A'} | {'Vespertino'} | Anne Sofia
-        </Text> */}
 
         <VStack justifyContent='space-between' alignItems='center' w='100%'>
           <HStack justifyContent='flex-start' alignItems='center' w='100%'>
@@ -61,7 +62,7 @@ export default function CardClass({}) {
 
           <HStack justifyContent='flex-start' alignItems='center' w='100%'>
             <HStack>
-              <Icon as={IoIosPricetags} color={"gray.300"} />
+              <Icon as={TbMoodBoy} color={"gray.300"} />
               <Text fontSize={["sm", "sm"]} fontWeight="semibold" color='gray.300' textAlign='left'>
                 Masculino: {15}
               </Text>
@@ -70,7 +71,7 @@ export default function CardClass({}) {
 
           <HStack justifyContent='flex-start' alignItems='center' w='100%'>
             <HStack>
-              <Icon as={IoIosPricetags} color={"gray.300"} />
+              <Icon as={CgGirl} color={"gray.300"} />
               <Text fontSize={["sm", "sm"]} fontWeight="semibold" color='gray.300' textAlign='left'>
                 Feminino: {10}
               </Text>
@@ -85,6 +86,7 @@ export default function CardClass({}) {
             rounded={'full'}
             bg={'blue.400'}
             color={'white'}
+            onClick={onClick}
             boxShadow={
               '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
             }

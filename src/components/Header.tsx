@@ -361,7 +361,7 @@ import {
   Flex,
   HStack,
   VStack,
-  Icon,
+  // Icon,
   useColorModeValue,
   Text,
   Drawer,
@@ -374,6 +374,11 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
 } from '@chakra-ui/react'
 
 import {
@@ -391,8 +396,11 @@ import { IoMan } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
 import { FaBus } from "react-icons/fa6";
 import { FaClipboardList } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
+import { FaHandHoldingWater } from "react-icons/fa";
+import { FaTools } from "react-icons/fa";
 
-import { IconType } from 'react-icons'
+// import { IconType } from 'react-icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth';
 
@@ -402,10 +410,10 @@ import { useAuth } from '../hooks/useAuth';
 //   onClick: () => void;
 // }
 
-interface NavItemProps extends FlexProps {
-  icon: IconType
-  children: React.ReactNode
-}
+// interface NavItemProps extends FlexProps {
+//   icon: IconType
+//   children: React.ReactNode
+// }
 
 interface MobileProps extends FlexProps {
   onOpen: () => void
@@ -415,36 +423,128 @@ interface SidebarProps extends BoxProps {
   onClose: () => void
 }
 
-// const LinkItems: Array<LinkItemProps> = [
-//   { name: 'Home', icon: FiHome,  },
-//   { name: 'Novo aluno', icon: FiTrendingUp },
-//   { name: 'Explore', icon: FiCompass },
-//   { name: 'Favourites', icon: FiStar },
-//   { name: 'Settings', icon: FiSettings },
-// ]
+// ESSE E O ANTIGO SIDEBAR
+
+// const LinkItems = [
+//   { name: 'Home', icon: FiHome, path: '/' },
+//   { name: 'Todos alunos', icon: PiStudentBold, path: '/all_students' },
+//   { name: 'Cadastrar aluno', icon: FaPlusSquare, path: '/register_student' },
+//   { name: 'Editar aluno', icon: FiCompass, path: '/boatEdit' },
+//   { name: 'Lista de turmas', icon: FaClipboardList, path: '/all_class' },
+//   { name: 'Lista de rotas', icon: FaBus, path: '/all_class' },
+//   { name: 'Turmas por ID', icon: TbReportSearch, path: '/cardBoatDetails' },
+//   { name: 'Motoristas', icon: IoMan, path: '/settings' },
+//   { name: 'Monitoras', icon: IoWomanSharp, path: '/settings' }, 
+//   { name: 'Usuários', icon: FaUsers, path: '/all_users' },  
+// ];
+
+// const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+//   const navigate = useNavigate();
+  
+//   return (
+//     <Box
+//       transition="3s ease"
+//       bg={useColorModeValue('blue.500', 'gray.900')}
+//       borderRight="1px"
+//       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
+//       w={{ base: 'full', md: 60 }}
+//       pos="fixed"
+//       h="full"
+//       color={'white'}
+//       {...rest}
+//     >
+//       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+//         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+//           Logo
+//         </Text>
+//         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
+//       </Flex>
+//       {LinkItems.map((link) => (
+//         <NavItem key={link.name} icon={link.icon} onClick={() => navigate(link.path)}>
+//           {link.name}
+//         </NavItem>
+//       ))}
+//     </Box>
+//   )
+// }
+
+// const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+//   return (
+//     <Box
+//       as="a"
+//       href="#"
+//       style={{ textDecoration: 'none' }}
+//       _focus={{ boxShadow: 'none' }}>
+//       <Flex
+//         align="center"
+//         p="4"
+//         mx="4"
+//         borderRadius="lg"
+//         role="group"
+//         cursor="pointer"
+//         _hover={{
+//           bg: 'blue.400',
+//           color: 'white',
+//         }}
+//         {...rest}>
+//         {icon && (
+//           <Icon
+//             mr="4"
+//             fontSize="16"
+//             _groupHover={{
+//               color: 'white',
+//             }}
+//             as={icon}
+//           />
+//         )}
+//         {children}
+//       </Flex>
+//     </Box>
+//   )
+// }
+
+
+
+
+// ESSE E O NOVO SIDEBAR
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
-  { name: 'Todos alunos', icon: PiStudentBold, path: '/all_students' },
-  { name: 'Cadastrar aluno', icon: FaPlusSquare, path: '/register_student' },
-  { name: 'Editar aluno', icon: FiCompass, path: '/boatEdit' },
-  { name: 'Lista de turmas', icon: FaClipboardList, path: '/listBoat' },
-  { name: 'Lista de rotas', icon: FaBus, path: '/' },
-  { name: 'Turmas por ID', icon: TbReportSearch, path: '/cardBoatDetails' },
-  { name: 'Motoristas', icon: IoMan, path: '/settings' },
-  { name: 'Monitoras', icon: IoWomanSharp, path: '/settings' }, 
-  { name: 'Usuários', icon: FaUsers, path: '/all_users' },  
+  {
+    name: 'Alunos',
+    icon: FiCompass,
+    subItems: [
+      { name: 'Todos alunos', icon: PiStudentBold, path: '/all_students' },
+      { name: 'Cadastrar aluno', icon: FaPlusSquare, path: '/register_student' },
+      { name: 'Deletados', icon: FaTrashAlt, path: '/students_deleted' },
+    ],
+  },
+  { name: 'Lista de turmas', icon: FaClipboardList, path: '/all_class' },
+  { name: 'Lista de rotas', icon: FaBus, path: '/all_routes' },
+  { name: 'Motoristas', icon: IoMan, path: '/drivers' },
+  { name: 'Monitoras', icon: IoWomanSharp, path: '/monitors' },
+  { name: 'Usuários', icon: FaUsers, path: '/all_users' },
+  { name: 'Lavagens', icon: FaHandHoldingWater, path: '/all_users' },
+  { name: 'Manutenção', icon: FaTools, path: '/all_users' },
+  {
+    name: 'Configurações',
+    icon: TbReportSearch,
+    subItems: [
+      { name: 'Motoristas', icon: IoMan, path: '/drivers' },
+      { name: 'Monitoras', icon: IoWomanSharp, path: '/monitors' },
+    ],
+  },
+  
 ];
+
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const navigate = useNavigate();
-  
+
   return (
     <Box
       transition="3s ease"
       bg={useColorModeValue('blue.500', 'gray.900')}
-      borderRight="1px"
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
@@ -457,49 +557,61 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} onClick={() => navigate(link.path)}>
-          {link.name}
-        </NavItem>
-      ))}
+      
+      {LinkItems.map((link) =>
+        link.subItems ? (
+          <Accordion allowToggle key={link.name} border="none" py={2}>
+            <AccordionItem border="none">
+              <AccordionButton
+                _hover={{ bg: 'blue.400' }}
+                _focus={{ boxShadow: 'none' }}
+                display="flex"
+                alignItems="center"
+              >
+                <Flex align="center" w="100%" textAlign="left">
+                  <Box as={link.icon} mr="4" />
+                  {link.name}
+                </Flex>
+                <AccordionIcon />
+              </AccordionButton>
+              
+              <AccordionPanel p="0">
+                {link.subItems.map((subLink) => (
+                  <Flex
+                    key={subLink.name}
+                    py="2"
+                    px="4"
+                    cursor="pointer"
+                    alignItems="center"
+                    bg="blue.400"
+                    _hover={{ bg: 'blue.400' }}
+                    onClick={() => navigate(subLink.path)}
+                  >
+                    <Box as={subLink.icon} mr="4" />
+                    <Text>{subLink.name}</Text>
+                  </Flex>
+                ))}
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        ) : (
+          <Flex
+            key={link.name}
+            py="4"
+            px="4"
+            cursor="pointer"
+            alignItems="center"
+            _hover={{ bg: 'blue.600', borderRadius: 'md' }}
+            onClick={() => navigate(link.path)}
+          >
+            <Box as={link.icon} mr="4" />
+            <Text>{link.name}</Text>
+          </Flex>
+        )
+      )}
     </Box>
-  )
-}
-
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-  return (
-    <Box
-      as="a"
-      href="#"
-      style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: 'blue.400',
-          color: 'white',
-        }}
-        {...rest}>
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Box>
-  )
-}
+  );
+};
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
