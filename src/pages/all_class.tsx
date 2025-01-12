@@ -62,7 +62,7 @@ export default function AllClass() {
   };
 
   const handleClassDetails = (class_ID: number) => {
-    navigate(`/cardBoatDetails/${class_ID}`);
+    navigate(`/class_details/${class_ID}`);
   };
 
   useEffect(() => {

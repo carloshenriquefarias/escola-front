@@ -403,6 +403,7 @@ import { FaTools } from "react-icons/fa";
 // import { IconType } from 'react-icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth';
+import { Logo } from './Logo';
 
 // interface LinkItemProps {
 //   name: string
@@ -524,7 +525,7 @@ const LinkItems = [
   { name: 'Motoristas', icon: IoMan, path: '/drivers' },
   { name: 'Monitoras', icon: IoWomanSharp, path: '/monitors' },
   { name: 'Usuários', icon: FaUsers, path: '/all_users' },
-  { name: 'Lavagens', icon: FaHandHoldingWater, path: '/all_users' },
+  { name: 'Lavagens', icon: FaHandHoldingWater, path: '/all_washing' },
   { name: 'Manutenção', icon: FaTools, path: '/all_users' },
   {
     name: 'Configurações',
@@ -552,9 +553,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
-        </Text>
+        <Logo/>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       
@@ -637,15 +636,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
-
-      <Text
-        display={{ base: 'flex', md: 'none' }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
+      
+      <Logo/>
 
       <VStack justifyContent={'flex-start'} alignItems={'flex-start'} display={{ base: 'none', md: 'flex' }}>
         <Text

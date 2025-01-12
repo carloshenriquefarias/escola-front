@@ -10,7 +10,7 @@ import Home from './pages/home'
 import Login from './pages/login'
 import RegisterBoatsBasic from './pages/register_student'
 import Admin from './pages/admin'
-import Payments from './pages/payments'
+// import Payments from './pages/payments'
 import News from './pages/news'
 import Ads from './pages/ads'
 import Users from './pages/users'
@@ -31,6 +31,7 @@ import Class from './pages/class'
 import AllClass from './pages/all_class'
 import StudentEdit from './pages/student_edit'
 import ClassDetails from './pages/class_details'
+import AllWashing from './pages/all_washing'
 
 
 function App() {
@@ -47,13 +48,13 @@ function App() {
           <Route path={'/login'} element={<Login/>} />
           <Route path={'/aboutUs'} element={<AboutUs/>} />
           <Route path={'/admin'} element={<Admin/>} />
-          <Route path={'/payments'} element={<Payments/>} />
+          {/* <Route path={'/payments'} element={<Payments/>} /> */}
           <Route path={'/news'} element={<News/>} />
           <Route path={'/registerNews'} element={<RegisterNews/>} />
           <Route path={'/newsEdit/:id'} element={<NewsEdit/>} />
           <Route path={'/boatNews/:id'} element={<BoatNews/>} />
           <Route path={'/ads'} element={<Ads/>} />
-          <Route path={'/users'} element={<Users/>} />
+          {/* <Route path={'/users'} element={<Users/>} /> */}
           <Route path={'/registerAds'} element={<RegisterAds/>} />
           <Route path={'/adsEdit/:id'} element={<AdsEdit/>} />
           <Route path={'/adsTerms'} element={<AdsTerms/>} />
@@ -69,6 +70,7 @@ function App() {
           <Route path={'/all_users'} element={<Users/>} />
           <Route path={'/students_deleted'} element={<StudentsDeleted/>} />
           <Route path={'/class_details/:id'} element={<ClassDetails/>} />
+          <Route path={'/all_washing'} element={<AllWashing/>} />
 
                             
         </Routes>

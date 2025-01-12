@@ -1,7 +1,7 @@
 import {
   Flex, SimpleGrid, useColorModeValue, Text, Box, HStack, InputGroup, Input, Button, Stack, Spinner, VStack,
   useDisclosure, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay,
-  Select as ChakraSelect, ModalFooter, Divider, Heading,
+  Select as ChakraSelect, ModalFooter, Divider, Heading, RadioGroup, Radio,
 } from '@chakra-ui/react';
 
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import CardStudents from '../components/card-students';
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import MenuMiniStatistics from '../components/MenuMiniStatistics';
+import TableStudents from '../components/TableStudents';
 
 import { FaRegFaceSadCry } from "react-icons/fa6";
 import { AiFillLike, AiOutlineReload } from "react-icons/ai";
@@ -31,6 +32,7 @@ import { BsFillSunFill } from "react-icons/bs";
 import { FaExchangeAlt } from "react-icons/fa";
 import { FaChildReaching } from "react-icons/fa6";
 import { FaUserGroup } from "react-icons/fa6";
+import { FaFilePdf } from "react-icons/fa6";
 
 import { ToastContainer } from "react-toastify";
 import { toastApiResponse } from '../components/Toast';
@@ -50,7 +52,7 @@ interface Aluno {
   telefone_responsavel: string;
   etnia: string;
   status: 'Ativo' | 'Inativo';
-  bolsaFamilia: 0 | 1;
+  bolsa_familia: 0 | 1;
   statusTransporte: '0' | '1';
   numeroMatriculaRede: string;
   numeroInep: string;
@@ -102,6 +104,7 @@ export default function AllStudents() {
   const [allStudents, setAllStudents] = useState<Aluno[]>([]);
   const [allDataToDashboard, setAllDataToDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedView, setSelectedView] = useState('1');
 
   // Filters and search
 
@@ -175,6 +178,10 @@ export default function AllStudents() {
 
   // 2 - Searchs
 
+  const handleViewChange = (value: string) => {
+    setSelectedView(value);
+  };
+
   const handleSearchStudent = async () => {
     setLoading(true);
     setIsSearching(true);
@@ -185,7 +192,6 @@ export default function AllStudents() {
       });
 
       const allResults = Array.isArray(response.data.data) ? response.data.data : [];
-      console.log('Resultados da pesquisa:', allResults);
       setSearchResults(allResults);
       setLoading(false);
 
@@ -196,6 +202,43 @@ export default function AllStudents() {
       toastApiResponse(error, 'Não foi possível buscar os alunos! Por favor, tente novamente!');
     }
   };
+
+  const handlePDFGenerate = async () => {
+    setLoading(true); // Inicia o estado de carregamento
+  
+    try {
+      // Faz a requisição para gerar o PDF
+      const response = await api.post('/alunos/gerar-pdf', {
+        nome_aluno: 'si',
+      }, { responseType: 'blob' });
+  
+      // Cria o blob do PDF retornado pela API
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+  
+      // Cria uma URL temporária para o PDF
+      const pdfUrl = window.URL.createObjectURL(blob);
+  
+      // Cria um link para download
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.setAttribute('download', 'alunos_filtrados.pdf');
+      document.body.appendChild(link);
+      link.click();
+  
+      // Remove o link temporário
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(pdfUrl);
+  
+      // Exibe mensagem de sucesso
+      toastApiResponse(null, 'PDF gerado com sucesso!');
+    } catch (error) {
+      // Exibe mensagem de erro
+      console.error('Erro ao gerar PDF:', error);
+      toastApiResponse(error, 'Não foi possível gerar o PDF! Por favor, tente novamente.');
+    } finally {
+      setLoading(false); // Finaliza o estado de carregamento
+    }
+  };  
 
   // const handleMultiSelectChange = (newOptions: StudentOption[]) => {
   //   setCombinedOptions(newOptions);
@@ -367,8 +410,15 @@ export default function AllStudents() {
 
         <Card bg={bg} boxShadow={cardShadow} mb='20px' py={3} px={3} w="100%" mx='auto' borderRadius={10}>
           <Text color={textColorSecondary} fontSize='md' mb='10px'>
-            Encontre o aluno que voce deseja
+            Encontre o aluno que voce deseja e selecione o modo de visualização
           </Text>
+
+          <RadioGroup onChange={handleViewChange} value={selectedView} color={'gray.500'}>
+            <Stack direction="row" spacing={4} mt={3}>
+              <Radio value="1">Cartão</Radio>
+              <Radio value="0">Tabela</Radio>
+            </Stack>
+          </RadioGroup>
 
           <VStack my={5} gap={2} width={'100%'} px={3}>
             <InputGroup size="md" width={'50%'}>
@@ -382,7 +432,6 @@ export default function AllStudents() {
             </InputGroup>
 
             <HStack justifyContent={'center'} alignItems={'center'} width={'50%'} mt={3} gap={5}>
-
               <Button
                 h="3rem"
                 size="lg"
@@ -452,34 +501,62 @@ export default function AllStudents() {
               ) : (
                 <>
                   {isSearching && (
-                    <Text fontWeight="semibold" fontSize={'lg'} my={5} pl={4} color={'blue.300'}>
-                      Alunos encontrados: {studentsToDisplay.length}
-                    </Text>
+                    <HStack alignItems={'center'} justifyContent={'space-between'} px={2}>
+                      <Text fontWeight="semibold" fontSize={'lg'} my={5} color={'blue.300'}>
+                        Alunos encontrados: {studentsToDisplay.length}
+                      </Text>
+
+                      <Button
+                        h="2rem"
+                        size="md"
+                        bg="blue.300"
+                        _hover={{ bg: "cyan.500" }}
+                        borderRadius={5}
+                        leftIcon={<FaFilePdf />}
+                        onClick={handlePDFGenerate}
+                        color={'white'}
+                        fontSize={'sm'}
+                      >
+                        PDF
+                      </Button>
+                    </HStack>                    
                   )}
-                  <SimpleGrid
-                    columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
-                    spacing={4}
-                    px={2}
-                    w="100%"
-                    mt={5}
-                  >
-                    {studentsToDisplay.map((student, index) => (
-                      <CardStudents
-                        key={student.id || index}
-                        nomeAluno={student.nome_aluno}
-                        turma={student.turma}
-                        turno={student.turno}
-                        rota={student.rota}
-                        sexo={student.sexo}
-                        etnia={student.etnia}
-                        cpfAluno={student.cpf_aluno}
-                        telefoneResponsavel={student.telefone_responsavel}
-                        dataNascimento={student.data_nascimento}
-                        professora='Nascimento'
-                        onClick={() => handleStudentDetails(student.id)}
+
+                  {selectedView === '1' ?                   
+                    <>
+                      <SimpleGrid
+                        columns={{ base: 1, sm: 1, md: 3, lg: 4, xl: 5 }}
+                        spacing={4}
+                        px={2}
+                        w="100%"
+                        mt={5}
+                      >
+                        {studentsToDisplay.map((student, index) => (
+                          <CardStudents
+                            key={student.id || index}
+                            nomeAluno={student.nome_aluno}
+                            turma={student.turma}
+                            turno={student.turno}
+                            rota={student.rota}
+                            sexo={student.sexo}
+                            etnia={student.etnia}
+                            cpfAluno={student.cpf_aluno}
+                            telefoneResponsavel={student.telefone_responsavel}
+                            dataNascimento={student.data_nascimento}
+                            professora='Nascimento'
+                            onClick={() => handleStudentDetails(student.id)}
+                          />
+                        ))}
+                      </SimpleGrid>
+                    </> 
+                    : 
+                    <>
+                      <TableStudents 
+                        students={studentsToDisplay} 
+                        onStudentClick={handleStudentDetails} 
                       />
-                    ))}
-                  </SimpleGrid>
+                    </>
+                  }
                 </>
               )}
             </Flex>

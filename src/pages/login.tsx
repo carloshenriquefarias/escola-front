@@ -693,3 +693,303 @@ export default function LoginPage() {
     </Flex>
   );
 }
+
+
+
+
+
+// ---------------------------------------------------------------
+// DAQUI PRA BAIXO
+
+
+
+// import React, { useState } from 'react';
+// import { useForm, SubmitHandler } from 'react-hook-form';
+// import {
+//   Box,
+//   Button,
+//   Flex,
+//   FormControl,
+//   FormLabel,
+//   Input,
+//   VStack,
+//   Heading,
+//   Text,
+//   InputGroup,
+//   InputRightElement,
+//   useColorModeValue,
+//   Image,
+//   HStack,
+//   FormErrorMessage,
+//   useToast,
+//   SimpleGrid,
+// } from '@chakra-ui/react';
+// import { HiLockOpen, HiLockClosed } from 'react-icons/hi2';
+// import { useNavigate } from 'react-router-dom';
+
+// interface IFormInputs {
+//   name: string;
+//   email: string;
+//   password: string;
+//   confirm_password: string;
+//   photo?: FileList;
+// }
+
+// export default function LoginPage() {
+//   const {
+//     register,
+//     handleSubmit,
+//     watch,
+//     formState: { errors },
+//   } = useForm<IFormInputs>();
+  
+//   const toast = useToast();
+//   const [showPassword, setShowPassword] = React.useState(false);
+//   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [previewImage, setPreviewImage] = useState<string | null>(null);
+//   const navigate = useNavigate();
+
+//   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+//     setIsLoading(true);
+
+//     try {
+//       const formData = new FormData();
+//       formData.append('name', data.name);
+//       formData.append('email', data.email);
+//       formData.append('password', data.password);
+      
+//       if (data.photo && data.photo[0]) {
+//         formData.append('photo', data.photo[0]);
+//       }
+
+//       const response = await fetch('YOUR_API_ENDPOINT', {
+//         method: 'POST',
+//         body: formData,
+//       });
+
+//       if (response.ok) {
+//         toast({
+//           title: "Cadastro realizado",
+//           description: "Sua conta foi criada com sucesso.",
+//           status: "success",
+//           position: "top",
+//           duration: 5000,
+//           isClosable: true,
+//         });
+
+//         await new Promise((resolve) => setTimeout(resolve, 2000));
+//         navigate('/login');
+//       } else {
+//         throw new Error('Falha no cadastro');
+//       }
+//     } catch (error) {
+//       console.error('Registration Error:', error);
+//       toast({
+//         title: "Erro no cadastro",
+//         description: "Ocorreu um erro ao criar sua conta. Por favor, tente novamente.",
+//         status: "error",
+//         position: "top",
+//         duration: 5000,
+//         isClosable: true,
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = event.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setPreviewImage(reader.result as string);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   return (
+//     <Flex
+//       minHeight="100vh"
+//       width="full"
+//       align="center"
+//       justifyContent="flex-start"
+//       bgImage="url('https://images.unsplash.com/photo-1714925847901-f3921db7f7e2?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"
+//       bgSize="cover"
+//       bgPosition="center"
+//     >
+//       <Box
+//         bg={useColorModeValue('white', 'gray.800')}
+//         p={8}
+//         maxWidth="32rem"
+//         width="100%"
+//         borderWidth={1}
+//         borderRadius={8}
+//         boxShadow="lg"
+//         ml={{ base: 4, md: 16 }}
+//       >
+//         <VStack spacing={4} align="flex-start" w="full">
+//           <HStack justifyContent={'center'}>
+//             <Image src="https://plus.unsplash.com/premium_photo-1674571895797-3ca2aaf89eed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Logo" boxSize="100px" />
+//             <VStack justifyContent={'flex-start'} alignItems={'flex-start'}>
+//               <Heading size="xl" alignItems={'flex-start'} color={'blue.300'}>Contrans</Heading>
+//               <Heading size="sm" lineHeight={1.4} color={'blue.300'}>Controle de dados e informações do transporte escolar</Heading>
+//             </VStack>
+//           </HStack>
+
+//           {/* <Text fontSize="md" color="gray.600">
+//             Crie sua conta
+//           </Text> */}
+
+//           <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+
+//             <FormControl mt={4}>
+//               <FormLabel>Foto (Opcional)</FormLabel>
+//               <Input
+//                 type="file"
+//                 accept="image/*"
+//                 {...register('photo')}
+//                 onChange={handleImageChange}
+//                 p={1}
+//               />
+//               {previewImage && (
+//                 <Box mt={2}>
+//                   <Image src={previewImage} alt="Preview" maxH="100px" />
+//                 </Box>
+//               )}
+//             </FormControl>
+
+//             <FormControl isInvalid={!!errors.name}>
+//               <FormLabel>Nome</FormLabel>
+//               <Input
+//                 rounded="md"
+//                 {...register('name', {
+//                   required: 'Este campo é obrigatório',
+//                   minLength: {
+//                     value: 3,
+//                     message: 'O nome deve ter pelo menos 3 caracteres',
+//                   },
+//                 })}
+//               />
+//               <FormErrorMessage>
+//                 {errors.name && errors.name.message}
+//               </FormErrorMessage>
+//             </FormControl>
+
+//             <FormControl mt={4} isInvalid={!!errors.email}>
+//               <FormLabel>Email</FormLabel>
+//               <Input
+//                 rounded="md"
+//                 type="email"
+//                 {...register('email', {
+//                   required: 'Este campo é obrigatório',
+//                   pattern: {
+//                     value: /\S+@\S+\.\S+/,
+//                     message: 'E-mail inválido',
+//                   },
+//                 })}
+//               />
+//               <FormErrorMessage>
+//                 {errors.email && errors.email.message}
+//               </FormErrorMessage>
+//             </FormControl>
+
+//             <SimpleGrid 
+//               columns={{ base: 1, md: 2, lg: 2 }} 
+//               spacing={3}
+//               w="100%"
+//               maxWidth={1480}
+//             >
+
+//             <FormControl mt={4} isInvalid={!!errors.password}>
+//               <FormLabel>Senha</FormLabel>
+//               <InputGroup>
+//                 <Input
+//                   rounded="md"
+//                   type={showPassword ? 'text' : 'password'}
+//                   {...register('password', {
+//                     required: 'Este campo é obrigatório',
+//                     minLength: {
+//                       value: 6,
+//                       message: 'A senha deve ter pelo menos 6 caracteres',
+//                     },
+//                   })}
+//                 />
+//                 <InputRightElement width="3rem">
+//                   <Button
+//                     h="1.5rem"
+//                     size="sm"
+//                     onClick={() => setShowPassword(!showPassword)}
+//                   >
+//                     {showPassword ? <HiLockOpen /> : <HiLockClosed />}
+//                   </Button>
+//                 </InputRightElement>
+//               </InputGroup>
+//               <FormErrorMessage>
+//                 {errors.password && errors.password.message}
+//               </FormErrorMessage>
+//             </FormControl>
+
+//             <FormControl mt={4} isInvalid={!!errors.confirm_password}>
+//               <FormLabel>Confirmar Senha</FormLabel>
+//               <InputGroup>
+//                 <Input
+//                   rounded="md"
+//                   type={showConfirmPassword ? 'text' : 'password'}
+//                   {...register('confirm_password', {
+//                     required: 'Este campo é obrigatório',
+//                     validate: (val: string) => {
+//                       if (watch('password') != val) {
+//                         return "As senhas não conferem";
+//                       }
+//                     },
+//                   })}
+//                 />
+//                 <InputRightElement width="3rem">
+//                   <Button
+//                     h="1.5rem"
+//                     size="sm"
+//                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+//                   >
+//                     {showConfirmPassword ? <HiLockOpen /> : <HiLockClosed />}
+//                   </Button>
+//                 </InputRightElement>
+//               </InputGroup>
+//               <FormErrorMessage>
+//                 {errors.confirm_password && errors.confirm_password.message}
+//               </FormErrorMessage>
+//             </FormControl>
+//             </SimpleGrid>
+
+//             <Button
+//               mt={4}
+//               colorScheme="blue"
+//               type="submit"
+//               width="full"
+//               rounded="md"
+//               isLoading={isLoading}
+//             >
+//               Cadastrar
+//             </Button>
+//           </form>
+
+//           <Button
+//             mt={0}
+//             variant="outline"
+//             width="full"
+//             rounded="md"
+//             onClick={() => navigate('/login')}
+//           >
+//             Já tem uma conta? Faça login
+//           </Button>
+
+//           <Text fontSize="xs" color="gray.600">
+//             Ao se cadastrar, você concorda com a Declaração de Privacidade e os Termos de Uso do Contrans.
+//           </Text>
+//         </VStack>
+//       </Box>
+//     </Flex>
+//   );
+// }
+
