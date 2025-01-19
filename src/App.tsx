@@ -32,6 +32,10 @@ import AllClass from './pages/all_class'
 import StudentEdit from './pages/student_edit'
 import ClassDetails from './pages/class_details'
 import AllWashing from './pages/all_washing'
+import AllMaintenance from './pages/all_maintenance'
+import RegisterMaintenance from './pages/register_maintenance'
+// import MaintenanceDetails from './pages/maintenance_details'
+
 
 
 function App() {
@@ -64,14 +68,16 @@ function App() {
           <Route path={'/all_students'} element={<AllStudents/>} />  
           <Route path={'/all_class'} element={<AllClass/>} /> 
           <Route path={'/register_student'} element={<RegisterStudent/>} /> 
+          <Route path={'/register_maintenance'} element={<RegisterMaintenance/>} /> 
           <Route path={'/student_details/:id'} element={<StudentDetails/>} />
+          {/* <Route path={'/maintenance_details/:id'} element={<MaintenanceDetails/>} /> */}
           <Route path={'/student_edit/:id'} element={<StudentEdit/>} />
           <Route path={'/class/:id'} element={<Class/>} />
           <Route path={'/all_users'} element={<Users/>} />
           <Route path={'/students_deleted'} element={<StudentsDeleted/>} />
           <Route path={'/class_details/:id'} element={<ClassDetails/>} />
           <Route path={'/all_washing'} element={<AllWashing/>} />
-
+          <Route path={'/all_maintenance'} element={<AllMaintenance/>} />
                             
         </Routes>
       </Router>

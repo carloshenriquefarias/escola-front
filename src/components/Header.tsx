@@ -526,7 +526,7 @@ const LinkItems = [
   { name: 'Monitoras', icon: IoWomanSharp, path: '/monitors' },
   { name: 'Usuários', icon: FaUsers, path: '/all_users' },
   { name: 'Lavagens', icon: FaHandHoldingWater, path: '/all_washing' },
-  { name: 'Manutenção', icon: FaTools, path: '/all_users' },
+  { name: 'Manutenção', icon: FaTools, path: '/all_maintenance' },
   {
     name: 'Configurações',
     icon: TbReportSearch,
