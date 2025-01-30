@@ -379,6 +379,7 @@ import {
   AccordionButton,
   AccordionIcon,
   AccordionPanel,
+  useToast,
 } from '@chakra-ui/react'
 
 import {
@@ -614,7 +615,24 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const handleLogout = () => {
+    toast({
+      title: "Login bem-sucedido",
+      description: "Você foi deslogado com sucesso! Até breve!",
+      status: "success",
+      position: "top",
+      duration: 2000,
+      isClosable: true,
+    });
+
+    setTimeout(() => {}, 2000);
+    logout();
+    navigate('/login');
+  };
   
   return (
     <Flex
@@ -696,7 +714,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={signOut}>Sign out</MenuItem>
+              <MenuItem onClick={handleLogout}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

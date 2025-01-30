@@ -1,4 +1,4 @@
-import { Flex, SimpleGrid, useColorModeValue, Text, Box, HStack } from '@chakra-ui/react';
+import { Flex, SimpleGrid, useColorModeValue, Text, Box, HStack, Button, VStack, Icon } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ import { GiTeacher } from "react-icons/gi";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.min.css";
 import { toastApiResponse } from '../components/Toast';
+import { FaPlus } from 'react-icons/fa';
 
 // import { useNavigate } from 'react-router-dom';
 // import { useAuth } from '../hooks/useAuth';
@@ -65,6 +66,10 @@ export default function AllClass() {
     navigate(`/class_details/${class_ID}`);
   };
 
+  const handleNewClass = () => {
+    navigate('/register_class');
+  };
+
   useEffect(() => {
     fetchAllClasses();
   }, []);
@@ -104,6 +109,13 @@ export default function AllClass() {
                     Todas as informações sobre as turmas da escola
                   </Text>
                 </Box>
+
+                <Button bg='gray.100' w='auto' h={'80px'} onClick={handleNewClass}>
+                  <VStack pt={0}>
+                    <Icon as={FaPlus} color={'blue.300'} h='28px' w='28px' />
+                    <Text color={'blue.300'} fontSize={['2xs', 'xs', 'sm', 'md']}>Nova turma</Text>
+                  </VStack>
+                </Button>
               </HStack>
             </SimpleGrid>
           </motion.div>

@@ -511,7 +511,7 @@ import {
   FormErrorMessage,
   useToast,
 } from '@chakra-ui/react';
-import { HiLockOpen, HiLockClosed } from 'react-icons/hi2';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -526,53 +526,46 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInputs>();
-  const { signIn } = useAuth();
+
   const toast = useToast();
+  const navigate = useNavigate(); // Para navegação entre páginas
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  
+  const { login } = useAuth(); // Acessando o contexto autenticado pelo hook useAuth
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     setIsLoading(true);
 
     try {
-      const response = await signIn(data.email, data.password);
+      // Chama a função de login do AuthContext
+      await login(data.email, data.password);
 
-      if (response) {
-        toast({
-          title: "Login bem-sucedido",
-          description: "Você foi autenticado com sucesso.",
-          status: "success",
-          position: "top",
-          duration: 5000,
-          isClosable: true,
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setIsLoading(false);
-        navigate(`/`);
-
-      } else {
-        toast({
-          title: "Erro de Login",
-          description: "Falha na autenticação. Por favor, verifique suas credenciais.",
-          status: "error",
-          position: "top",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-
-    } catch (error) {
-      console.error('Login Error:', error);
       toast({
-        title: "Erro de Login",
-        description: "Ocorreu um erro ao fazer login. Por favor, tente novamente mais tarde.",
-        status: "error",
+        title: "Login bem-sucedido",
+        description: "Você foi autenticado com sucesso.",
+        status: "success",
+        position: "top",
         duration: 5000,
         isClosable: true,
       });
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      navigate(`/`);
+
+    } catch (error) {
+      console.error('Login Error:', error);
+
+      toast({
+        title: "Credenciais inválidas",
+        description: "Login ou senha incorreta! Por favor, tente novamente.",
+        position: "top",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
     } finally {
       setIsLoading(false);
     }
@@ -650,10 +643,11 @@ export default function LoginPage() {
                     size="sm"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <HiLockOpen /> : <HiLockClosed />}
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
                   </Button>
                 </InputRightElement>
               </InputGroup>
+
               <FormErrorMessage>
                 {errors.password && errors.password.message}
               </FormErrorMessage>
@@ -671,7 +665,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <Link color="gray.700" href="#" fontSize="sm">
+          <Link color="gray.700" href="register_user" fontSize="sm">
             Esqueceu a senha?
           </Link>
 
@@ -681,6 +675,7 @@ export default function LoginPage() {
             width="full"
             rounded="md"
             color={'white'}
+            onClick={() => navigate('/register_user')}
           >
             Cadastrar-se
           </Button>

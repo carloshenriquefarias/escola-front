@@ -21,7 +21,7 @@ import { api } from '../services/api';
 import { useEffect, useState } from 'react';
 // import { toastApiResponse } from '../components/Toast';
 import CardStudents from '../components/card-students';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Aluno {
   id: number; // Identificação única do aluno
@@ -55,53 +55,43 @@ export default function ClassDetails() {
 
   // const { user } = useAuth();
   const { id: classID } = useParams<{ id: string }>();
+  
   const toast = useToast();
-
+  const navigate = useNavigate();
   const bg = useColorModeValue("white", "navy.700");
   const cardShadow = useColorModeValue("0px 18px 40px rgba(112, 144, 176, 0.12)", "unset");
   const textColorSecondary = "gray.400";
 
   const [allStudents, setAllStudents] = useState<Aluno[]>([]);
 
-  // const fetchAllStudentsByClass = async () => {
-  //   try {
-  //     const response = await api.post('/alunos/students-by-class', {
-  //       turma: classID
-  //     });
-  //     const allStudentsByClass = response.data.alunos;
-  //     setAllStudents(allStudentsByClass);
-  //     console.log('Dados dos alunos:', allStudentsByClass);
-
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     toastApiResponse(error, 'Não foi possível listar os alunos desta turma! Por favor, tente novamente!');
-  //   }
-  // };
-
-  async function fetchStudentDetails() {
+  const fetchAllStudentsByClass = async () => {
     try {
-      const response = await api.get(`/turmas/${classID}/alunos`);    
-      setAllStudents(response.data.student);
-      console.log('Dados dos alunos:', response.data.student);
-      return
+      const response = await api.post('/turmas/students-by-class', {
+        turma_id: classID
+      });
+      const allStudentsByClass = response.data.students;
+      setAllStudents(allStudentsByClass);
+      console.log('Dados dos alunos 22:00:', allStudentsByClass);
 
     } catch (error) {
       console.error('Error:', error);
       toast({
-        title: "Erro de Login",
-        description: "Não foi possivel carregar os dados do aluno.",
+        title: "Erro",
+        description: "Não foi possivel listar os alunos dessa turma. Por favor, tente novamente.",
         status: "error",
         position: "top",
         duration: 5000,
         isClosable: true,
       });
-      throw error;
-
     }
-  }
+  };
+
+  const handleStudentDetails = (student_ID: number) => {
+    navigate(`/student_details/${student_ID}`);
+  };
 
   const statisticsData = [
-    { bg: 'blue', icon: MdDirectionsBoatFilled, name: 'Alunos na turma', value: allStudents.length },
+    { bg: 'blue', icon: MdDirectionsBoatFilled, name: 'Alunos na turma', value: '10' },
     { bg: '', icon: AiFillLike, name: 'Meninos', value: '1'  },
     { bg: '', icon: AiFillDislike, name: 'Meninas', value: '2'  },
     { bg: 'blue', icon: HiLockOpen, name: 'Bolsa familia', value: '5'  },
@@ -110,7 +100,7 @@ export default function ClassDetails() {
   ];
 
   useEffect(() => {
-    fetchStudentDetails();
+    fetchAllStudentsByClass();
   }, []);
 
   return (
@@ -182,7 +172,7 @@ export default function ClassDetails() {
           </Card>
 
           <Card boxShadow={cardShadow} mb='10px' p={5} w="100%" borderRadius={10} bg={bg}>
-            <Text color={textColorSecondary} fontSize='md' me='6px' mb='5px'>
+            <Text color={textColorSecondary} fontSize='md' me='6px' mb={5}>
               Alunos desta turma
             </Text>
 
@@ -195,10 +185,12 @@ export default function ClassDetails() {
                   turno={student.turno}
                   rota={student.rota}
                   sexo={student.sexo}
+                  etnia={student.etnia}
                   // sexo={student.sexo === 'F' ? "Feminino" : "Masculino"} // Corrigido o valor de gender (estava como student)
                   cpfAluno={student.cpf_aluno} // Corrigido para pegar o CPF correto
                   telefoneResponsavel={student.telefone_responsavel} // Corrigido para pegar o phone_number
                   dataNascimento={student.data_nascimento} // Corrigido para pegar a data de nascimento
+                  onClick={() => handleStudentDetails(student.id)}
                 />
               ))}            
             </SimpleGrid>

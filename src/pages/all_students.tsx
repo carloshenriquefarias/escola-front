@@ -33,6 +33,8 @@ import { FaExchangeAlt } from "react-icons/fa";
 import { FaChildReaching } from "react-icons/fa6";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaFilePdf } from "react-icons/fa6";
+import { TbSquareArrowLeft } from "react-icons/tb";
+import { TbSquareArrowRight } from "react-icons/tb";
 
 import { ToastContainer } from "react-toastify";
 import { toastApiResponse } from '../components/Toast';
@@ -101,16 +103,16 @@ export default function AllStudents() {
 
   // Stored data
 
-  const [allStudents, setAllStudents] = useState<Aluno[]>([]);
+  // const [allStudents, setAllStudents] = useState<Aluno[]>([]);
   const [allDataToDashboard, setAllDataToDashboard] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [selectedView, setSelectedView] = useState('1');
 
   // Filters and search
 
   const [inputValue, setInputValue] = useState("");
-  const [searchResults, setSearchResults] = useState<Aluno[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  // const [searchResults, setSearchResults] = useState<Aluno[]>([]);
+  // const [isSearching, setIsSearching] = useState(false);
   const [sexo, setSexo] = useState<string>('');
   const [etnia, setEtnia] = useState<string>('');
   const [packageFamily, setPackageFamily] = useState<string>('');
@@ -121,10 +123,72 @@ export default function AllStudents() {
   const [route, setRoute] = useState<string>('');
   // const [combinedOptions, setCombinedOptions] = useState<StudentOption[]>([]);
   // const studentsToDisplay = isSearching ? searchResults : allStudents;
+  // const studentsToDisplay = isSearching
+  //   ? (Array.isArray(searchResults) ? searchResults : [])
+  //   : (Array.isArray(allStudents) ? allStudents : [])
+  // ;
+
+  const [allStudents, setAllStudents] = useState<Aluno[]>([]);
+  const [currentPage, setCurrentPage] = useState(1); // Página atual
+  const [totalPages, setTotalPages] = useState(1); // Total de páginas
+  const [loading, setLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false); // Estado para busca
+  const [searchResults, setSearchResults] = useState<Aluno[] | null>(null); // Resultados da busca
+
   const studentsToDisplay = isSearching
-    ? (Array.isArray(searchResults) ? searchResults : [])
-    : (Array.isArray(allStudents) ? allStudents : [])
+    ? Array.isArray(searchResults)
+      ? searchResults
+      : []
+    : Array.isArray(allStudents)
+    ? allStudents
+    : []
   ;
+
+  // Função para rolar para o topo
+  const scrollToTheTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Rola suavemente para o topo
+    });
+  };
+
+  // Gera a lista de números de página para exibição
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const totalToShow = 5; // Número de páginas a exibir no centro
+    const start = Math.max(1, currentPage - Math.floor(totalToShow / 2));
+    const end = Math.min(totalPages, start + totalToShow - 1);
+
+    for (let i = start; i <= end; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <Flex>
+        {pageNumbers.map((page) => (
+          <Button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            variant={page === currentPage ? "solid" : "outline"}
+            colorScheme={page === currentPage ? "blue" : "gray"}
+            mx={1}
+          >
+            {page}
+          </Button>
+        ))}
+        {totalPages > end && (
+          <Button
+            onClick={() => setCurrentPage(totalPages)}
+            variant="outline"
+            colorScheme="gray"
+            mx={1}
+          >
+            {totalPages}
+          </Button>
+        )}
+      </Flex>
+    );
+  };
 
   // Dashboard data
 
@@ -145,19 +209,41 @@ export default function AllStudents() {
 
   // 1 - Fetch Data
 
-  const fetchAllStudents = async () => {
+  // const fetchAllStudents = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await api.get('/alunos');
+  //     const allStudents = Array.isArray(response.data.alunos) ? response.data.alunos : [];
+  //     setAllStudents(allStudents);
+  //     setLoading(false);
+
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.error('Error:', error);
+  //     setAllStudents([]);
+  //     toastApiResponse(error, 'Não foi possível listar os alunos! Por favor, tente novamente!');
+  //   }
+  // };
+
+  // 1 - Fetch Data com Paginação
+  const fetchAllStudents = async (page: number) => {
     setLoading(true);
     try {
-      const response = await api.get('/alunos');
-      const allStudents = Array.isArray(response.data.alunos) ? response.data.alunos : [];
-      setAllStudents(allStudents);
-      setLoading(false);
+      const response = await api.get(`/alunos?page=${page}`); // Inclui paginação
+      const alunosData = response.data.alunos.data; // Dados da página atual
+      setAllStudents(alunosData);
+      setCurrentPage(response.data.alunos.current_page); // Página atual
+      setTotalPages(response.data.alunos.last_page); // Total de páginas
 
     } catch (error) {
-      setLoading(false);
-      console.error('Error:', error);
+      console.error("Error:", error);
       setAllStudents([]);
-      toastApiResponse(error, 'Não foi possível listar os alunos! Por favor, tente novamente!');
+      toastApiResponse(
+        error,
+        "Não foi possível listar os alunos! Por favor, tente novamente!"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -347,10 +433,17 @@ export default function AllStudents() {
   //   setCombinedOptions(newOptions);
   // }, [sexo, etnia, packageFamily, schoolBus, deficiency, classStudent, period, route]);
 
+  // useEffect(() => {
+  //   fetchAllStudents();
+  //   fetchDataToDashboard();
+  // }, []);
+
+  // 2 - UseEffect para carregar os dados iniciais
   useEffect(() => {
-    fetchAllStudents();
     fetchDataToDashboard();
-  }, []);
+    fetchAllStudents(currentPage);
+    scrollToTheTop(); // Rola para o topo sempre que a página mudar
+  }, [currentPage]);
 
   return (
     <Flex direction="column" height="100%" bg="red">
@@ -557,6 +650,31 @@ export default function AllStudents() {
                       />
                     </>
                   }
+
+                  {/* Paginação */}
+                  <Flex justify="center" my={5} align="center" wrap="wrap">
+                    <Button
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      isDisabled={currentPage === 1}
+                      mx={1}
+                      leftIcon={<TbSquareArrowLeft/>}
+                    >
+                      Anterior
+                    </Button>
+
+                    {renderPageNumbers()}
+
+                    <Button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      isDisabled={currentPage === totalPages}
+                      mx={1}
+                      rightIcon={<TbSquareArrowRight/>}
+                    >
+                      Próxima
+                    </Button>
+                  </Flex>
                 </>
               )}
             </Flex>

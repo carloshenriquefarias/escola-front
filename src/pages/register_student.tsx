@@ -1,13 +1,17 @@
 'use client'
 
 import { useForm, Controller } from "react-hook-form"
-import { Box, Button, FormControl, FormLabel, Input, VStack, Radio, RadioGroup, Select, 
+import {
+  Box, Button, FormControl, FormLabel, Input, VStack, Radio, RadioGroup, Select,
   Text, Image, useToast, SimpleGrid, HStack, useColorModeValue, Center,
+  IconButton,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "../components/Header";
 import Card from "../components/Card";
+import { FiTrash } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   nome_aluno: string;
@@ -42,6 +46,8 @@ export default function RegisterStudent() {
   const toast = useToast();
   const bg = useColorModeValue("white", "navy.700");
   const cardShadow = useColorModeValue("0px 18px 40px rgba(112, 144, 176, 0.12)", "unset");
+  const fileInputRef = useRef<HTMLInputElement | null>(null); // Referência ao input
+  const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -70,7 +76,7 @@ export default function RegisterStudent() {
     },
   })
 
-  async function onSubmit(data: FormData) {  
+  async function onSubmit(data: FormData) {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/alunos', {
         method: 'POST',
@@ -80,8 +86,8 @@ export default function RegisterStudent() {
         },
         body: JSON.stringify(data),
       });
-  
-      const responseText = await response.text();  
+
+      const responseText = await response.text();
       let result;
 
       try {
@@ -90,7 +96,7 @@ export default function RegisterStudent() {
         console.error('Erro ao parsear JSON:', e);
         throw new Error('Resposta inválida do servidor');
       }
-  
+
       if (result.status === true) {
         toast({
           title: "Formulário enviado",
@@ -100,6 +106,8 @@ export default function RegisterStudent() {
           duration: 5000,
           isClosable: true,
         });
+
+        navigate(`/`);
 
       } else {
         // Tratamento específico para erro de CPF duplicado
@@ -116,7 +124,7 @@ export default function RegisterStudent() {
           throw new Error(result.message || 'Erro desconhecido ao cadastrar aluno');
         }
       }
-      
+
     } catch (error) {
       console.error('Erro detalhado:', error);
       toast({
@@ -130,16 +138,59 @@ export default function RegisterStudent() {
     }
   }
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0]
+  //   if (file) {
+  //     const reader = new FileReader()
+  //     reader.onloadend = () => {
+  //       setPreviewImage(reader.result as string)
+  //     }
+  //     reader.readAsDataURL(file)
+  //   }
+  // }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+
+    // Resetar o valor do input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+
+    toast({
+      title: 'Imagem removida',
+      description: 'A imagem foi removida com sucesso.',
+      status: 'success',
+      position: "top",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const formatPhoneNumber = (value: string): string => {
+    // Remove todos os caracteres não numéricos
+    const numericValue = value.replace(/\D/g, '');
+
+    // Aplica a máscara de telefone
+    if (numericValue.length <= 10) {
+      // Formato para números com 10 dígitos (sem o nono dígito)
+      return numericValue.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+    } else {
+      // Formato para números com 11 dígitos (com o nono dígito)
+      return numericValue.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    }
+  };
 
   return (
     <Header>
@@ -172,11 +223,14 @@ export default function RegisterStudent() {
         </HStack>
       </SimpleGrid>
 
-      <Box as="form" onSubmit={handleSubmit(onSubmit)} maxWidth="1000px" margin="auto" mt={5} justifyContent={'flex-start'} my={10}>
+      <Box as="form" onSubmit={handleSubmit(onSubmit)} maxWidth="1200px" margin="auto" mt={5} justifyContent={'flex-start'} my={10}>
         <VStack spacing={0} align="stretch">
 
           {/* Informações basicas */}
-          <Card boxShadow={cardShadow} mb='5px' p={5} w="100%" borderRadius={10} bg={bg}>
+          <Card
+            boxShadow={cardShadow} mb='5px' p={5} w="100%" bg={bg}
+            borderRadius="lg" shadow="md" borderWidth={1} borderColor={'gray.300'}
+          >
             <Text
               color={'blue.300'}
               fontWeight="semibold"
@@ -186,7 +240,7 @@ export default function RegisterStudent() {
               Informações básicas
             </Text>
 
-            <FormControl mt={3}>
+            {/* <FormControl mt={3}>
               <FormLabel>Escolha uma foto</FormLabel>
               <Input
                 type="file"
@@ -201,6 +255,39 @@ export default function RegisterStudent() {
               />
               {previewImage && (
                 <Image src={previewImage} alt="Preview" maxWidth="200px" mt={5} borderRadius={10} />
+              )}
+            </FormControl> */}
+
+            <FormControl mt={3}>
+              <FormLabel>Escolha uma foto</FormLabel>
+              <Input
+                ref={fileInputRef} // Adiciona a referência ao input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  handleImageChange(e);
+                }}
+              />
+              {previewImage && (
+                <Box position="relative" display="inline-block" mt={5}>
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    maxWidth="200px"
+                    borderRadius={10}
+                  />
+
+                  <IconButton
+                    aria-label="Excluir imagem"
+                    icon={<FiTrash />}
+                    size="sm"
+                    colorScheme="red"
+                    position="absolute"
+                    top="0"
+                    right="0"
+                    onClick={handleRemoveImage}
+                  />
+                </Box>
               )}
             </FormControl>
 
@@ -345,7 +432,10 @@ export default function RegisterStudent() {
             />
           </Card>
 
-          <Card boxShadow={cardShadow} mb='5px' p={5} w="100%" borderRadius={10} bg={bg} mt={5}>
+          <Card
+            boxShadow={cardShadow} mb='5px' p={5} w="100%" bg={bg} mt={5}
+            borderRadius="lg" shadow="md" borderWidth={1} borderColor={'gray.300'}
+          >
             <Text
               color={'blue.300'}
               fontWeight="semibold"
@@ -387,7 +477,7 @@ export default function RegisterStudent() {
               my={5}
               borderRadius={10}
             >
-              <Controller
+              {/* <Controller
                 name="telefone_responsavel"
                 control={control}
                 rules={{ required: "Telefone do responsável é obrigatório" }}
@@ -395,6 +485,24 @@ export default function RegisterStudent() {
                   <FormControl isInvalid={!!errors.telefone_responsavel}>
                     <FormLabel>Telefone do Responsável</FormLabel>
                     <Input {...field} placeholder="Telefone do responsável" />
+                    <Text color="red.500">{errors.telefone_responsavel?.message}</Text>
+                  </FormControl>
+                )}
+              /> */}
+
+              <Controller
+                name="telefone_responsavel"
+                control={control}
+                rules={{ required: 'Telefone do responsável é obrigatório' }}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <FormControl isInvalid={!!errors.telefone_responsavel}>
+                    <FormLabel>Telefone do Responsável</FormLabel>
+                    <Input
+                      {...field}
+                      value={value || ''} // Garante que o valor seja uma string
+                      placeholder="Telefone do responsável"
+                      onChange={(e) => onChange(formatPhoneNumber(e.target.value))} // Aplica a formatação
+                    />
                     <Text color="red.500">{errors.telefone_responsavel?.message}</Text>
                   </FormControl>
                 )}
@@ -420,7 +528,10 @@ export default function RegisterStudent() {
             </SimpleGrid>
           </Card>
 
-          <Card boxShadow={cardShadow} mb='5px' p={5} w="100%" borderRadius={10} bg={bg} mt={5}>
+          <Card 
+            boxShadow={cardShadow} mb='5px' p={5} w="100%" bg={bg} mt={5}
+            borderRadius="lg" shadow="md" borderWidth={1} borderColor={'gray.300'}
+          >
             <Text
               color={'blue.300'}
               fontWeight="semibold"

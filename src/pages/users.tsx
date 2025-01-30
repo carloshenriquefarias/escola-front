@@ -81,7 +81,7 @@ export default function Admin() {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   // const [currentDataUser, setCurrentDataUser] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [userIdToDelete, setUserIdToDelete] = useState<number | undefined | null>(null);
 
   const [inputValue, setInputValue] = useState("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -117,12 +117,12 @@ export default function Admin() {
     onOpen();
   };
 
-  const handleDeleteUserByID = (id: any) => {
-    console.log(`Deleting user with ID: ${id}`);
-    toastApiResponse(null, 'User deleted successfully!');
-    closeModal();
-    //So falta agora implentar o try e catch com a requisicao
-  };
+  // const handleDeleteUserByID = (id: number) => {
+  //   console.log(`Deleting user with ID: ${id}`);
+  //   toastApiResponse(null, 'User deleted successfully!');
+  //   closeModal();
+  //   //So falta agora implentar o try e catch com a requisicao
+  // };
 
   const fetchAllUsers = async () => {
     try {
@@ -136,19 +136,24 @@ export default function Admin() {
     }
   };
 
-  // const fetchUserByID = async (id: string) => {
-  //   try {
-  //     const response = await api.post('/users/edit', {
-  //       id: id
-  //     });
-  //     const dataUser = response.data.user;
-  //     setCurrentDataUser(dataUser);
+  const handleDeleteUserByID = async (id: number) => {
+    try {
+      const response = await api.post('/users/delete', {
+        id: id
+      });
 
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     toastApiResponse(error, 'It is not possible to list this user! Please try again!');
-  //   }
-  // };
+      if (response.data.status === true) {        
+        toastApiResponse(null, 'User deleted successfully!');
+        closeModal();
+      }
+
+      fetchAllUsers();
+      
+    } catch (error) {
+      console.error('Error:', error);
+      toastApiResponse(error, 'It is not possible to list this user! Please try again!');
+    }
+  };
 
   // const handleProfiledByUserId = (id: string) => {
   //   // Armazena o ID e o email como um objeto JSON
@@ -295,45 +300,6 @@ export default function Admin() {
                 Lista de todos os usuarios
               </Text>
 
-              {/* <Flex gap={2} my={5} justifyContent={'center'}>
-                <Button colorScheme="blue" onClick={resetSearch}>
-                  Todos
-                </Button>
-                <Button colorScheme="blue" onClick={filterUsersRegisteredToday}>
-                  Hoje
-                </Button>
-                <Button colorScheme="blue" onClick={filterUsersRegisteredThisWeek}>
-                  Esta Semana
-                </Button>
-                <Button colorScheme="blue" onClick={filterUsersRegisteredThisMonth}>
-                  Este Mês
-                </Button>
-                <Button colorScheme="blue" onClick={filterUsersRegisteredThisYear}>
-                  Este Ano
-                </Button>
-                <Button colorScheme="blue" onClick={filterCustomers}>
-                  Customers
-                </Button>
-                <Button colorScheme="blue" onClick={filterAdmin}>
-                  Admin
-                </Button>
-                <Button colorScheme="blue" onClick={filterBroker}>
-                  Broker
-                </Button>
-                <Button colorScheme="blue" onClick={sortAscending}>
-                  Ordem Crescente
-                </Button>
-                <Button colorScheme="blue" onClick={sortDescending}>
-                  Ordem Decrescente
-                </Button>
-                <Button colorScheme="blue" onClick={sortByNewest}>
-                  Mais Recente
-                </Button>
-                <Button colorScheme="blue" onClick={sortByOldest}>
-                  Mais Antigo
-                </Button>                
-              </Flex> */}
-
               {isSearching && (
                 <Text mb={4} fontWeight="bold" fontSize={'xl'}>
                   {searchResults.length} {searchResults.length === 1 ? "Profile Found" : "Profiles Found"}
@@ -452,7 +418,14 @@ export default function Admin() {
                                 Editar Perfil
                               </Button>
 
-                              <Button bg={"red.700"} color={"white"} gap={2} onClick={() => openModal(user.id)} fontSize={'sm'}>
+                              <Button 
+                                bg={"red.700"} 
+                                color={"white"} 
+                                gap={2} 
+                                onClick={() => openModal(user.id)} 
+                                fontSize={'sm'}
+                                isLoading={loading} 
+                              >
                                 <Icon as={FaRegTrashCan} color={"white"} h="1rem" w="1rem" />
                                 Deletar usuario
                               </Button>
@@ -582,7 +555,12 @@ export default function Admin() {
                 <ModalDelete
                   isOpen={isModalOpen}
                   onClose={closeModal}
-                  onClick={() => handleDeleteUserByID(userIdToDelete)}
+                  onClick={() => {
+                    if (typeof userIdToDelete === 'number') {
+                      handleDeleteUserByID(userIdToDelete);
+                    }
+                  }}
+                  // onClick={() => handleDeleteUserByID(userIdToDelete)}
                   // onClick={handleDeleteUserByID} 
                   // onClick={() => handleDeleteUserByID(user.id)}
                   // isLoading={isLoading}
